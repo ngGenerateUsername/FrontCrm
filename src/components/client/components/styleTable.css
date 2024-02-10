@@ -1,0 +1,21 @@
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 1rem;
+  }
+  
+  .pagination-link {
+    margin: 0 0.25rem;
+    padding: 0.25rem 0.5rem;
+    border: 1px solid #ddd;
+    cursor: pointer;
+  }
+  
+  .pagination-link.active {
+    background-color: #ddd;
+  }
+  
+  .pagination-link-disabled {
+    pointer-events: none;
+    opacity: 0.5;
+  }
