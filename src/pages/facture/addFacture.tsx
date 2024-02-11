@@ -371,16 +371,16 @@ export default function OverviewFacture(props:{onClose:any,listOffre:any,setList
     }
     console.log("rrrrrrrrrrrrrrrrrrr",listProduit[0].typeDevis)
     
-    if(listProduit[0]?.typeDevis !== devisOffre){
-      toast({
-        title: "ajouter offre de meme devise",
-        status: 'error',
-        duration: 3000,
-        isClosable: true,
-        position: 'bottom-left',
-      })
-      return;
-     }
+    // if(listProduit[0]?.typeDevis !== devisOffre){
+    //   toast({
+    //     title: "ajouter offre de meme devise",
+    //     status: 'error',
+    //     duration: 3000,
+    //     isClosable: true,
+    //     position: 'bottom-left',
+    //   })
+    //   return;
+    //  }
     const listOffre = listProduit.map((p: any) => {
    
       return {

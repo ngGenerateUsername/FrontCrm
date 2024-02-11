@@ -4,7 +4,7 @@ import listProduit from 'pages/produit/listProduit';
 
 const routesProduit = [
 	{
-		name: 'Produit',layout: '/commercial',path: '/list',
+		name: 'Produit',layout: '/commercial',path: '/produit-list',
 		icon: <Icon as={MdPerson} width='20px' height='20px' color='inherit' />,
 		component:listProduit
 	},

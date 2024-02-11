@@ -6,7 +6,7 @@ const routesCategorie = [
 	
 	
 	{
-		name: 'Categorie',layout: '/commercial',path: '/liste-categorie',
+		name: 'Categorie',layout: '/commercial',path: '/categorie-list',
 		icon: <Icon as={ImTicket} width='20px' height='20px' color='inherit' />,
 		component: Categorie
 	}
