@@ -26,7 +26,7 @@ export const AllOffre = createAsyncThunk(
         const { rejectWithValue } = thunkAPI;
         try {
 
-            const response = await axios.get("http://localhost:9998/BackendCRM/offre/all");
+            const response = await axios.get("http://localhost:8082/BackendCRM/offre/all");
             console.log(response.data)
             return response.data;
         } catch (error: any) {
@@ -40,7 +40,7 @@ export const AddOffre = createAsyncThunk(
         const { rejectWithValue } = thunkAPI;
         try {
 
-            const response = await axios.post("http://localhost:9998/BackendCRM/offre",data);
+            const response = await axios.post("http://localhost:8082/BackendCRM/offre",data);
             console.log(response.data)
             return response.data;
         } catch (error: any) {
@@ -56,7 +56,7 @@ export const OffreDetailsThunk = createAsyncThunk(
         const { rejectWithValue } = thunkAPI;
         try {
 
-            const response = await axios.get(`http://localhost:9998/BackendCRM/offre/id/${data}`);
+            const response = await axios.get(`http://localhost:8082/BackendCRM/offre/id/${data}`);
             console.log("this is the offre",response.data)
             return response.data;
         } catch (error: any) {
@@ -71,7 +71,7 @@ export const DeleteOffre = createAsyncThunk(
         const { rejectWithValue } = thunkAPI;
         try {
 
-            const response = await axios.delete(`http://localhost:9998/BackendCRM/offre/id/${data}`);
+            const response = await axios.delete(`http://localhost:8082/BackendCRM/offre/id/${data}`);
             
             return response.data;
         } catch (error: any) {
@@ -87,7 +87,7 @@ export const UpdateOffre = createAsyncThunk(
         const { rejectWithValue } = thunkAPI;
         try {
 
-            const response = await axios.post("http://localhost:9998/BackendCRM/offre",data);
+            const response = await axios.post("http://localhost:8082/BackendCRM/offre",data);
             console.log(response.data)
             return response.data;
         } catch (error: any) {

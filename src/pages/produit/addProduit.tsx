@@ -197,7 +197,7 @@ const isErrorDevise = selectedDevise === '';
   useEffect(() => {
          const fetchCategories = async () => {
       try {
-        const response = await fetch('http://localhost:9998/BackendCRM/categorie');
+        const response = await fetch('http://localhost:8082/BackendCRM/categorie');
         const data = await response.json();
         setCategories(data); 
               } catch (error) {

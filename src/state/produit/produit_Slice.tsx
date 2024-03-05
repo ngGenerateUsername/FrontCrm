@@ -24,7 +24,7 @@ export const AllProduit = createAsyncThunk(
         const { rejectWithValue } = thunkAPI;
         try {
 
-            const response = await axios.get("http://localhost:9998/BackendCRM/produit");
+            const response = await axios.get("http://localhost:8082/BackendCRM/produit");
             console.log(response.data)
             return response.data;
         } catch (error: any) {
@@ -39,7 +39,7 @@ export const DeleteProduit = createAsyncThunk(
         const { rejectWithValue } = thunkAPI;
         try {
 
-            const response = await axios.delete("http://localhost:9998/BackendCRM/produit/"+data);
+            const response = await axios.delete("http://localhost:8082/BackendCRM/produit/"+data);
             console.log(response.data)
             return response.data;
         } catch (error: any) {
@@ -53,7 +53,7 @@ export const ModifierProduit = createAsyncThunk(
     async (data:any , thunkAPI) => {
         const { rejectWithValue } = thunkAPI;
         try {
-            const response = await axios.put('http://localhost:9998/BackendCRM/produit' ,data);
+            const response = await axios.put('http://localhost:8082/BackendCRM/produit' ,data);
             //console.log(response.data,'response.data')
             console.log(response.data)
             return response.data;
@@ -70,8 +70,8 @@ export const AddProduit = createAsyncThunk(
         const { rejectWithValue } = thunkAPI;
         try {
             const { idCategorie, ...otherData } = data;
-            const response = await axios.post(`http://localhost:9998/BackendCRM/produit/${idCategorie}`,otherData);
-            console.log(`URL: http://localhost:9998/BackendCRM/produit/${idCategorie}`);
+            const response = await axios.post(`http://localhost:8082/BackendCRM/produit/${idCategorie}`,otherData);
+            console.log(`URL: http://localhost:8082/BackendCRM/produit/${idCategorie}`);
             console.log(response.data)
             return response.data;
 
