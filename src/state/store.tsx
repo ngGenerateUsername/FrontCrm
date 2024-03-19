@@ -135,11 +135,9 @@ import {
   DetailsMsgExport,
   SetStatusMsgExport
 } from './user/Msg_Slice'
-import {  AllCategoriesExport, AllProductExport, ProductsByCategoryExport } from "./Offre/ProductSlices";
+import {  AllCategoriesExport, AllProductExport, ProductsByCategoryExport } from "./produit/ProductSlices";
 import { AllOffreExport, OffreDetailsExport, UpdateOffreExport } from "./Offre/OffreSlices";
 import { AllFactureByComExport, FactureDetailsExport } from "./Facture/FactureSlices";
-import { AddDevisExport, AllDevisByComsExport, DetailDevisExport } from "./devis/devis_Slice";
-
 
 import {
   AllCategorieExport,
@@ -150,7 +148,10 @@ import {
 import {
   AllProduitExport,
   DeleteProduitExport,
-  ModifierProduitExport
+  ModifierProduitExport,
+  AddProduitExport,
+  CMDAllProduitExport,
+  AllProduitcmdCatExport
 } from "./produit/produit_Slice";
 
 const rootReducer = combineReducers({
@@ -307,9 +308,7 @@ const rootReducer = combineReducers({
     FactureDetailsExport:FactureDetailsExport.reducer,
  /************************ Devis_Slice  **************************/
 
- AllDevisByComsExport:AllDevisByComsExport.reducer,
- AddDevisExport:AddDevisExport.reducer,
- DetailDevisExport:DetailDevisExport.reducer,
+
     
  
 
@@ -319,7 +318,11 @@ const rootReducer = combineReducers({
          /************************ Produit_Slice  **************************/
          AllProduitExport: AllProduitExport.reducer,
          DeleteProduitExport: DeleteProduitExport.reducer,
-         ModifierProduitExport: ModifierProduitExport.reducer
+         ModifierProduitExport: ModifierProduitExport.reducer,
+         AddProduitExport:AddProduitExport.reducer,
+         CMDAllProduitExport:CMDAllProduitExport.reducer,
+         AllProduitcmdCatExport:AllProduitcmdCatExport.reducer
+
 });
 export type RootState = ReturnType<typeof rootReducer>;
 

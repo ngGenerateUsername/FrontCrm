@@ -60,24 +60,20 @@ export default function Overview({clickEvent}:any) {
   const [prixInitial, setprixInitial] = useState("");
   const isErrorprixInitial = prixInitial === "";
 
-  // console.log("this is produitData props shit: "+produitData.reference) //this is will be deleted sooner
+  const  [qte, setQte] = useState("");
+  const isErrorQte = qte === "";
 
+  const  [minQte, setMinQte] = useState("");
+  const isErrorMinQte = minQte === "";
+
+
+  const  [idEntreprise, setidEntreprise] = useState("");
+  const isidEntreprise = idEntreprise === "";
 
 const [categories, setCategories] = useState([]);
 const [selectedCategoryId, setSelectedCategoryId] = useState("");
 const isErrorcategorie = selectedCategoryId === '';
 
-//ajout d'un champ devise
-const devises=[
-  'TND',
-  'SAR',
-  'EUR',
-  'USD',
-  'CAD'
-];
-//end ajouter
-const [selectedDevise,setSelectedDevise] = useState("");
-const isErrorDevise = selectedDevise === '';
 
 //find devise
   let history = useHistory();
@@ -94,8 +90,10 @@ const isErrorDevise = selectedDevise === '';
           nom,
           description,
           prixInitial:parseFloat(prixInitial),
+          qte,
+          minQte,
+          idEntreprise,
           idCategorie: selectedCategoryId,
-          typeDevis:selectedDevise
         }) as any
       )
 
@@ -141,6 +139,22 @@ const isErrorDevise = selectedDevise === '';
         isClosable: true,
         position: 'top',
       })
+    } else if (isErrorQte === true) {
+      toast({
+        title: "Qte invalid",
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+        position: 'top',
+      })
+    } else if (isErrorMinQte === true) {
+      toast({
+        title: "min Qte invalid",
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+        position: 'top',
+      })
     }else if (isErrorcategorie === true) {
       toast({
         title: "categorie invalid",
@@ -150,16 +164,7 @@ const isErrorDevise = selectedDevise === '';
         position: 'top',
       })
       
-    }else
-      if(isErrorDevise == true)
-      {
-        toast({
-          title: "devise invalid",
-          status: 'error',
-          duration: 3000,
-          isClosable: true,
-          position: 'top',
-        })
+    
       }else
     {
       const idProd=await ProduitFetch(); 
@@ -180,7 +185,8 @@ const isErrorDevise = selectedDevise === '';
         nom:nom,
         description:description,
         prixInitial:Number(prixInitial),
-        typeDevis:selectedDevise,
+        qte:qte,
+        minQte:minQte,
         categorie:{
           idCategorie:found.idCategorie,
           nom:found.nom,
@@ -195,18 +201,18 @@ const isErrorDevise = selectedDevise === '';
   }
 
   useEffect(() => {
-         const fetchCategories = async () => {
-      try {
-        const response = await fetch('http://localhost:8082/BackendCRM/categorie');
-        const data = await response.json();
-        setCategories(data); 
-              } catch (error) {
-        console.error('Erreur lors de la récupération des catégories:', error);
-      }
-    };
+    const fetchCategories = async () => {
+ try {
+   const response = await fetch('http://localhost:9999/api/categorie/ALLCategories');
+   const data = await response.json();
+   setCategories(data); 
+         } catch (error) {
+   console.error('Erreur lors de la récupération des catégories:', error);
+ }
+};
 
-    fetchCategories();
-  }, []);
+fetchCategories();
+}, []);
   
 
   return (
@@ -233,7 +239,6 @@ const isErrorDevise = selectedDevise === '';
             mt="24px"
             display="flex"
             flexDirection="column">
-        
             <TabPanels mt="24px" maxW={{ md: "90%", lg: "100%" }} mx="auto">
               <TabPanel w={{ sm: "330px", md: "700px", lg: "850px" }} mx="auto">
                 <Box>
@@ -339,38 +344,7 @@ const isErrorDevise = selectedDevise === '';
                             )}
                           </FormControl>
                           
-                          <FormControl isInvalid={isErrorDevise}>
-                          <FormLabel
-                              color={textColor}
-                              fontSize="xs"
-                              fontWeight="bold">
-                             Devise
-                            </FormLabel>
-                              <Select  
-                              isRequired={true}
-                              borderRadius="15px"
-                              fontSize="xs"
-                              name="selectedDevise"
-                              value={selectedDevise}
-                              onChange={(e) => setSelectedDevise(e.target.value)} 
-                              >
-                                <option value=''>Selectionnez le devise de ce produit</option>
-                                {
-                                  devises.map((elem)=>(
-                                    <option value={elem}>{elem}</option>
-                                  ))
-                                }
-                              </Select>
-                              {!isErrorDevise ? (
-                              <FormErrorMessage>
-                                Le devise est requis.
-                              </FormErrorMessage>
-                            ) : (
-                              <FormErrorMessage>
-                                Le devise est requis.
-                              </FormErrorMessage>
-                            )}
-                         </FormControl>
+                      
 
                           <FormControl isInvalid={isErrorprixInitial}>
                             <FormLabel
@@ -399,7 +373,58 @@ const isErrorDevise = selectedDevise === '';
                             )}
                           </FormControl>
 
-                         
+                          <FormControl isInvalid={isErrorQte}>
+                            <FormLabel
+                              color={textColor}
+                              fontSize="xs"
+                              fontWeight="bold">
+                             Quantité
+                            </FormLabel>
+                            <Input
+                              isRequired={true}
+                              borderRadius="15px"
+                              placeholder="prix"
+                              fontSize="xs"
+                              name="qte"
+                              value={qte}
+                              onChange={(e) => setQte(e.target.value)}
+                            />
+                            {!isErrorQte ? (
+                              <FormErrorMessage>
+                                La quantité est requise.
+                              </FormErrorMessage>
+                            ) : (
+                              <FormErrorMessage>
+                                Le quantité est requise.
+                              </FormErrorMessage>
+                            )}
+                          </FormControl>
+                          <FormControl isInvalid={isErrorMinQte}>
+                            <FormLabel
+                              color={textColor}
+                              fontSize="xs"
+                              fontWeight="bold">
+                             Quantité Min
+                            </FormLabel>
+                            <Input
+                              isRequired={true}
+                              borderRadius="15px"
+                              placeholder="prix"
+                              fontSize="xs"
+                              name="minQte"
+                              value={minQte}
+                              onChange={(e) => setMinQte(e.target.value)}
+                            />
+                            {!isErrorMinQte ? (
+                              <FormErrorMessage>
+                                La quantité est requise.
+                              </FormErrorMessage>
+                            ) : (
+                              <FormErrorMessage>
+                                Le quantité est requise.
+                              </FormErrorMessage>
+                            )}
+                          </FormControl>
 
                           <FormControl isInvalid={isErrorcategorie}>
                             <FormLabel

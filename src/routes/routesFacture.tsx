@@ -4,7 +4,6 @@ import { CreditIcon, DocumentIcon, InvoiceIcon, MastercardIcon, StatsIcon } from
 
 
 
-import ListDevis from 'pages/devis/ListDevis';
 import FactureDetails from 'pages/facture/FactureDetails';
 import ListFacture from 'pages/facture/ListFacture';
 

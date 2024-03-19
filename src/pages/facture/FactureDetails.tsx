@@ -66,7 +66,6 @@ import { DateDisplay } from "helpers/DateDisplay";
 import { DeleteFacture, FactureDetailsThunk } from "state/Facture/FactureSlices";
 
 
-import { DeleteDevis, DetailDevis } from "state/devis/devis_Slice";
 import Invoice from "pages/Invoice/Invoice";
 import { Dialog } from "primereact/dialog";
 
@@ -257,7 +256,6 @@ const DevisDetails = () => {
 			TVA: factureDetails?.montantTotalHTTC-factureDetails?.montantTotalHT-1, 
 			timbre: 1, 
 			totalTTC:factureDetails?.montantTotalHTTC,
-			devise : offresDeFacture[0]?.payload?.ligneOffres[0].produit.typeDevis
 		}
 		
 		));
@@ -351,8 +349,8 @@ const DevisDetails = () => {
 													<Th >PRODUIT</Th>
 													<Th>Quantité</Th>
 													<Th>Remise (%)</Th>
-													<Th>Totale HT ({offresDeFacture[0]?.payload?.ligneOffres[0].produit.typeDevis})</Th>
-													<Th>Totale TTC ({offresDeFacture[0]?.payload?.ligneOffres[0].produit.typeDevis})</Th>
+													<Th>Totale HT ({offresDeFacture[0]?.payload?.ligneOffres[0].produit})</Th>
+													<Th>Totale TTC ({offresDeFacture[0]?.payload?.ligneOffres[0].produit})</Th>
 												</Tr>
 											</Thead>
 

@@ -51,8 +51,7 @@ import OverviewOffre from "pages/offre/addOffre";
 
 import { AllFactureByCom } from "state/Facture/FactureSlices";
 import { DateDisplay } from "helpers/DateDisplay";
-import OverviewDevis from "pages/devis/addDevis";
-import { AllDevisByCom } from "state/devis/devis_Slice";
+
 import OverviewFacture from "pages/facture/addFacture";
 type RowObj = {
   name: [string, boolean];

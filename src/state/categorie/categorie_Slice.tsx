@@ -24,7 +24,7 @@ export const AllCategorie = createAsyncThunk(
         const { rejectWithValue } = thunkAPI;
         try {
 
-            const response = await axios.get("http://localhost:8082/BackendCRM/categorie");
+            const response = await axios.get("http://localhost:9999/api/categorie/ALLCategories");
             console.log(response.data)
             return response.data;
         } catch (error: any) {
@@ -53,7 +53,7 @@ export const ModifierCategorie = createAsyncThunk(
     async (data: any, thunkAPI) => {
         const { rejectWithValue } = thunkAPI;
         try {
-            const response = await axios.put('http://localhost:8082/BackendCRM/categorie' ,data);
+            const response = await axios.put("http://localhost:9999/api/categorie/updatecategorie" ,data);
             //console.log(response.data,'response.data')
             console.log(response.data)
             return response.data;
@@ -69,7 +69,7 @@ export const AddCategorie = createAsyncThunk(
     async (data : any, thunkAPI) => {
         const { rejectWithValue } = thunkAPI;
         try {
-            const response = await axios.post(`http://localhost:8082/BackendCRM/categorie`,data);
+            const response = await axios.post("http://localhost:9999/api/categorie/AddCategorie",data);
             //console.log(response.data,'response.data')
             console.log(response.data)
             return response.data;

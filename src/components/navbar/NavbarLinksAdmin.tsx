@@ -71,7 +71,7 @@ export default function HeaderLinks(props: { secondary: boolean }) {
 	}
 	const [time, setTime] = useState(null);
 
-	setInterval(()=>{setTime(new Date().toUTCString())},1000)	
+	setInterval(()=>{setTime(new Date().toUTCString())},100000)	
 	return (
 		<Flex
 			w={{ sm: '100%', md: 'auto' }}

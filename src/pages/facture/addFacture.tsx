@@ -56,7 +56,7 @@ import { AddRelationClientUser, CLientsOfMyEntreprise, MyCLientsUser } from "sta
 import { entreprisePerContact } from "state/user/Role_Slice";
 import { AddContact } from "state/user/SignUp_Slice";
 import { CUIAutoComplete } from 'chakra-ui-autocomplete'
-import { AllCategories, AllProduct } from "state/Offre/ProductSlices";
+import { AllCategories, AllProduct } from "state/produit/ProductSlices";
 import { useSelector } from "react-redux";
 import { MultiSelect } from "primereact/multiselect";
 import { OverlayPanel } from "primereact/overlaypanel";

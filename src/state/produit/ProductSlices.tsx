@@ -24,7 +24,7 @@ export const AllProduct = createAsyncThunk(
         const { rejectWithValue } = thunkAPI;
         try {
 
-            const response = await axios.get("http://localhost:8082/BackendCRM/produit");
+            const response = await axios.get("http://localhost:9999/api/Produit/AllProduits");
             console.log(response.data)
             return response.data;
         } catch (error: any) {
@@ -38,7 +38,7 @@ export const AllCategories = createAsyncThunk(
         const { rejectWithValue } = thunkAPI;
         try {
 
-            const response = await axios.get("http://localhost:8082/BackendCRM/categorie");
+            const response = await axios.get("http://localhost:9999/api/categorie/ALLCategories");
             console.log(response.data)
             return response.data;
         } catch (error: any) {

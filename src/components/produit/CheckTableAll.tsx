@@ -38,6 +38,7 @@ import Menu from "components/menu/MainMenu";
 import { useEffect, useState } from "react";
 import { Console } from "console";
 import { useHistory } from "react-router-dom";
+
 import { useSelector, useDispatch } from "react-redux";
 
 import { AllProduit, DeleteProduit, ModifierProduit } from "state/produit/produit_Slice";
@@ -51,16 +52,12 @@ type RowObj = {
 };
 
 
-const columnHelper = createColumnHelper<RowObj>();
+//const columnHelper = createColumnHelper<RowObj>();
 
 // const columns = columnsDataCheck;
 export default function CheckTable() {
- 
-
-  const [sorting, setSorting] = React.useState<SortingState>([]);
   const textColor = useColorModeValue("secondaryGray.900", "white");
   const borderColor = useColorModeValue("gray.200", "whiteAlpha.100");
-  const [resp, setResp] = useState("");
   const { isOpen, onOpen, onClose } = useDisclosure();
   const {
     isOpen: isOpenn,
@@ -72,12 +69,11 @@ export default function CheckTable() {
   const [editItemNom, setEditItemNom] = useState(null);
   const [editItemDescription, setEditItemDescription] = useState(null);
   const [editItemPrixInitial, setEditItemPrixInitial] = useState(null);
-  const [editItemDevise,setEditItemDevise] = useState(null);
   const [editItemCategorieId,setEditItemCategorieId] = useState(null);
   const [editItemCategorieName,setEditItemCategorieName] = useState(null);
-  const[devise,setDevise] = useState(null);
-  const [editProduitData, setEditProduitData] = useState(null);
-
+  const [editQte,setEditQte] = useState(null);
+  const [editMinQte,seteditMinQte] = useState(null);
+    const [editProduitData, setEditProduitData] = useState(null);
  
   const btnRef = React.useRef();
   
@@ -87,6 +83,7 @@ export default function CheckTable() {
  
   useEffect(() => {
     dispatch(AllProduit() as any);
+    //all product came from prod slice
   }, [dispatch]);
   const { status, record } = useSelector((state: any) => state.AllProduitExport);
   console.log(record, status);
@@ -98,39 +95,47 @@ export default function CheckTable() {
   useEffect(()=>{ setRecordState(record) },[record]);
 
   //manage state child to parent
-   const refreshRecord = (dataFromChild:any)=>{
-    if(editItemId){
-      const recordUpdate = record.map((elemRecord:any)=>{
-        if(elemRecord.idProduit== dataFromChild.idProduit)
-        return {...dataFromChild,prixAvecTva:dataFromChild.prixInitial * (1 + dataFromChild.categorie.tva /100)};
-        else
+// Inside the `refreshRecord` function, update the recordState with the modified data
+const refreshRecord = (dataFromChild: any) => {
+  if (editItemId) {
+    const recordUpdate = recordState.map((elemRecord: any) => {
+      if (elemRecord.idProduit === dataFromChild.idProduit) {
+        return { ...dataFromChild, prixAvecTva: dataFromChild.prixInitial * (1 + dataFromChild.categorie.tva / 100) };
+      } else {
         return elemRecord;
-      })
-      setRecordState(recordUpdate);
-    }else 
-    {
-      console.log(`hello im here nom : `);
-      console.log(dataFromChild)
-      console.log(`stringify dataFrom child: ${dataFromChild}`)
-      console.log(`End hello instruction message !`);
-      dataFromChild.prixAvecTva = dataFromChild.prixInitial * (1 + dataFromChild.categorie.tva /100);
-      setRecordState([...recordState,dataFromChild]);
-    }
-
-    onClose();
+      }
+    });
+    setRecordState(recordUpdate);
+  } else {
+    dataFromChild.prixAvecTva = dataFromChild.prixInitial * (1 + dataFromChild.categorie.tva / 100);
+    setRecordState([...recordState, dataFromChild]);
   }
+
+  onClose();
+};
+
+// Inside the component, use `dispatch` to call the `ModifierProduit` action
+const ModifProduit = async (updatedData: any) => {
+  try {
+    const { id, ...restData } = updatedData;
+
+    // Dispatch the action to update the product
+    dispatch(ModifierProduit({ id, ...restData }) as any);
+    
+  } catch (error) {
+    // Handle errors, log or show an alert
+    console.error("Failed to update product:", error);
+  }
+};
+
   //end state added
-
-
 
   const { status: statusCommerciaux, record: recordCommerciaux } = useSelector(
     (state: any) => state.CommerciauxPerEntrepriseExport
   );
-  console.log(recordCommerciaux, statusCommerciaux);
   const { status:statusCLientsOfMyEntrepriseJustClients, record:recordCLientsOfMyEntrepriseJustClients } = useSelector(
     (state: any) => state.CLientsOfMyEntrepriseJustClientsExport
   );
-  console.log(recordCLientsOfMyEntrepriseJustClients, statusCLientsOfMyEntrepriseJustClients);
 
   const DeleteProduitF = async (id: string) => {
     const confirmation = window.confirm("Êtes-vous sûr de vouloir supprimer ce produit ?");
@@ -146,7 +151,7 @@ export default function CheckTable() {
     }
   };
   const [idRelation, setidRelation] = useState("");
-  function OpenAffect(id : any, reference: any, nom : any, description : any, prixInitial : any) {
+  function OpenAffect(id : any, reference: any, nom : any, description : any, prixInitial : any,qte:any,minQte:any , idCategorie:any) {
     console.log("ID sélectionné :", id); 
     const produitToEdit = record.find((e: any) => e.idProduit === id);
     if (produitToEdit) {
@@ -156,6 +161,9 @@ export default function CheckTable() {
       setEditItemNom(nom);
       setEditItemDescription(description);
       setEditItemPrixInitial(prixInitial);
+      setEditQte(qte);
+      seteditMinQte(minQte);
+      setEditItemCategorieId(idCategorie);
       onOpen();
     } else {
       console.log("Produit introuvable");
@@ -216,6 +224,7 @@ export default function CheckTable() {
                 {e.reference}
               </Text>
             </Td>
+         
             <Td>
               <Flex
                 justifyContent="space-between"
@@ -243,7 +252,7 @@ export default function CheckTable() {
                 color={textColor}
                 fontSize="sm"
                 fontWeight="700">
-              {e?.categorie?.nom}
+                {e.description}
               </Text>
             </Td>
             <Td>
@@ -258,9 +267,10 @@ export default function CheckTable() {
                 color={textColor}
                 fontSize="sm"
                 fontWeight="700">
-                {e?.categorie?.tva + " %"} 
+              {e?.categorie?.nom}
               </Text>
             </Td>
+            
          
             <Td>
               <Flex
@@ -275,6 +285,23 @@ export default function CheckTable() {
                 fontSize="sm"
                 fontWeight="700">
                 {e.prixInitial+ " Dt"}
+              </Text>
+              </Td>
+
+
+              <Td>
+              <Flex
+                justifyContent="space-between"
+                align="center"
+                fontSize={{ sm: "10px", lg: "12px" }}
+                color="gray.400"></Flex>
+              <Text
+                justifyContent="space-between"
+                align="center"
+                color={textColor}
+                fontSize="sm"
+                fontWeight="700">
+                {e?.categorie?.tva + " %"} 
               </Text>
             </Td>
             <Td>
@@ -292,8 +319,38 @@ export default function CheckTable() {
                 {Number(e.prixAvecTva).toFixed(3)+ " Dt"}
               </Text>
             </Td>
+            
         
-        
+            <Td>
+              <Flex
+                justifyContent="space-between"
+                align="center"
+                fontSize={{ sm: "10px", lg: "12px" }}
+                color="gray.400"></Flex>
+              <Text
+                justifyContent="space-between"
+                align="center"
+                color={textColor}
+                fontSize="sm"
+                fontWeight="700">
+                {Number(e.qte)}
+              </Text>
+            </Td>
+            <Td>
+              <Flex
+                justifyContent="space-between"
+                align="center"
+                fontSize={{ sm: "10px", lg: "12px" }}
+                color="gray.400"></Flex>
+              <Text
+                justifyContent="space-between"
+                align="center"
+                color={textColor}
+                fontSize="sm"
+                fontWeight="700">
+                {Number(e.minQte)}
+              </Text>
+            </Td>
             <Td>
 <Flex
   justifyContent="space-between"
@@ -320,15 +377,17 @@ onClick={() => DeleteProduitF(e.idProduit)}
   color="gray.400"
 ></Flex>
 <Flex
- onClick={() => {
+ onClick={()  =>  {
   setEditItemId(e.idProduit);
   setEditItemReference(e.reference); 
   setEditItemNom(e.nom); 
   setEditItemDescription(e.description); 
   setEditItemPrixInitial(e.prixInitial); 
-  setEditItemDevise(e.typeDevis);
   setEditItemCategorieId(e.categorie.idCategorie);
   setEditItemCategorieName(e.categorie.nom);
+  setEditQte(e.qte);
+  seteditMinQte(e.minQte);
+  
   onOpen();
 }}
 marginLeft="40%"
@@ -399,6 +458,23 @@ alignItems="center"
                Nom de Produit
               </Text>
             </Th>
+            
+            <Th pe="10px" borderColor={borderColor} cursor="pointer">
+              <Flex
+                justifyContent="space-between"
+                align="center"
+                fontSize={{ sm: "10px", lg: "12px" }}
+                color="gray.400"></Flex>
+              <Text
+                justifyContent="space-between"
+                align="center"
+                fontSize={{ sm: "10px", lg: "12px" }}
+                color="gray.400">
+            Description           
+                 </Text>
+            </Th>
+
+
             <Th pe="10px" borderColor={borderColor} cursor="pointer">
               <Flex
                 justifyContent="space-between"
@@ -424,7 +500,8 @@ alignItems="center"
                 align="center"
                 fontSize={{ sm: "10px", lg: "12px" }}
                 color="gray.400">
-              TVA de Categorie
+                              Prix Initial
+
               </Text>
             </Th>
            
@@ -439,7 +516,8 @@ alignItems="center"
                 align="center"
                 fontSize={{ sm: "10px", lg: "12px" }}
                 color="gray.400">
-              Prix Initial
+                                TVA de Categorie
+
               </Text>
             </Th>
             <Th pe="10px" borderColor={borderColor} cursor="pointer">
@@ -456,7 +534,34 @@ alignItems="center"
               Prix Avec TVA
               </Text>
             </Th>
-            
+            <Th pe="10px" borderColor={borderColor} cursor="pointer">
+              <Flex
+                justifyContent="space-between"
+                align="center"
+                fontSize={{ sm: "10px", lg: "12px" }}
+                color="gray.400"></Flex>
+              <Text
+                justifyContent="space-between"
+                align="center"
+                fontSize={{ sm: "10px", lg: "12px" }}
+                color="gray.400">
+              Quantité
+              </Text>
+            </Th>
+            <Th pe="10px" borderColor={borderColor} cursor="pointer">
+              <Flex
+                justifyContent="space-between"
+                align="center"
+                fontSize={{ sm: "10px", lg: "12px" }}
+                color="gray.400"></Flex>
+              <Text
+                justifyContent="space-between"
+                align="center"
+                fontSize={{ sm: "10px", lg: "12px" }}
+                color="gray.400">
+              Quantié Minimum
+              </Text>
+            </Th>
             
             <Th pe="10px" borderColor={borderColor} cursor="pointer">
               <Text
@@ -496,11 +601,16 @@ alignItems="center"
           <DrawerBody>
     {editItemId ? (
       <Overview1
-      produitData={{ id: editItemId, reference: editItemReference, nom: editItemNom,
-         description: editItemDescription, prixInitial: editItemPrixInitial,
-         typeDevis:editItemDevise,
+      produitData={{ id: editItemId,
+         reference: editItemReference,
+          nom: editItemNom,
+         description: editItemDescription, 
+         prixInitial: editItemPrixInitial,
          categorieId:editItemCategorieId,
-         categorieName:editItemCategorieName
+         categorieName:editItemCategorieName,
+         qte:editQte,
+         minQte:editMinQte
+         
         }} clickEvent={refreshRecord} />
      
     ) : (

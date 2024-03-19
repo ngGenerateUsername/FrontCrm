@@ -16,7 +16,6 @@ import routesContact from 'routes/routesContact'
 import testsocket from 'pages/testSocket'
 import routesOffre from 'routes/routesOffre';
 
-import routesDevis from 'routes/routesDevis';
 import routesFacture from 'routes/routesFacture';
 
 import routesProduit from 'routes/routesProduit';
@@ -66,9 +65,7 @@ routesContact.forEach(element => {
 routesOffre.forEach(element => {
 	routes.push(element)
 });
-routesDevis.forEach(element => {
-	routes.push(element)
-});
+
 routesFacture.forEach(element => {
 	routes.push(element)
 });

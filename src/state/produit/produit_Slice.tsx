@@ -24,7 +24,7 @@ export const AllProduit = createAsyncThunk(
         const { rejectWithValue } = thunkAPI;
         try {
 
-            const response = await axios.get("http://localhost:8082/BackendCRM/produit");
+            const response = await axios.get("http://localhost:9999/api/Produit/AllProduits");
             console.log(response.data)
             return response.data;
         } catch (error: any) {
@@ -39,7 +39,7 @@ export const DeleteProduit = createAsyncThunk(
         const { rejectWithValue } = thunkAPI;
         try {
 
-            const response = await axios.delete("http://localhost:8082/BackendCRM/produit/"+data);
+            const response = await axios.delete("http://localhost:9999/api/Produit/deleteproduit/"+data);
             console.log(response.data)
             return response.data;
         } catch (error: any) {
@@ -50,28 +50,52 @@ export const DeleteProduit = createAsyncThunk(
 
 export const ModifierProduit = createAsyncThunk(
     "Produit/ModifierProduit",
-    async (data:any , thunkAPI) => {
-        const { rejectWithValue } = thunkAPI;
-        try {
-            const response = await axios.put('http://localhost:8082/BackendCRM/produit' ,data);
-            //console.log(response.data,'response.data')
-            console.log(response.data)
-            return response.data;
-
-
-        } catch (error: any) {
-            return rejectWithValue(error.message)
-        }
+    async (data: any, thunkAPI) => {
+      const { rejectWithValue } = thunkAPI;
+      try {
+        const { idProduit, ...otherData } = data;
+        const response = await axios.put(
+          `http://localhost:9999/api/Produit/updateProduit/${idProduit}`,
+          otherData
+        );
+    
+    
+        // Log the response data
+        console.log(response.data);
+  
+        // Return the response data
+        return response.data;
+      } catch (error: any) {
+        // If an error occurs, reject the promise with the error message
+        return rejectWithValue(error.message);
+      }
     }
-)
+  );
+  
+  
 export const AddProduit = createAsyncThunk(
     "Produit/Produit",
     async (data : any, thunkAPI) => {
         const { rejectWithValue } = thunkAPI;
         try {
             const { idCategorie, ...otherData } = data;
-            const response = await axios.post(`http://localhost:8082/BackendCRM/produit/${idCategorie}`,otherData);
-            console.log(`URL: http://localhost:8082/BackendCRM/produit/${idCategorie}`);
+            const response = await axios.post(` http://localhost:9999/api/Produit/addproduit/${idCategorie}`,otherData);
+            console.log(response.data)
+            return response.data;
+
+
+        } catch (error: any) {
+            return rejectWithValue(error.message)
+        }
+    }
+)
+export const AllProduitcmdCat = createAsyncThunk(
+    "Produit/AllProduitcmdCat",
+    async (data : any, thunkAPI) => {
+        const { rejectWithValue } = thunkAPI;
+        try {
+            const { idCategorie, ...otherData } = data;
+            const response = await axios.post(` http://localhost:9999/api/Produit/produits/categorie/${idCategorie}`,otherData);
             console.log(response.data)
             return response.data;
 
@@ -82,8 +106,67 @@ export const AddProduit = createAsyncThunk(
     }
 )
 
+export const CMDAllProduit = createAsyncThunk(
+    "Produit/CMDAllProduit",
+    async ( data , thunkAPI) => {
+        const { rejectWithValue } = thunkAPI;
+        try {
+
+            const response = await axios.get("http://localhost:9999/api/Produit/AllProduitscmd");
+            console.log(response.data)
+            return response.data;
+        } catch (error: any) {
+            return rejectWithValue(error.message)
+        }
+    }
+)
 
 
+/************************ AllProduitcmdcat ***********************/
+export const AllProduitcmdCatExport = createSlice({
+    name: "AllProduitcmdCat",
+    initialState,
+    reducers: {},
+    extraReducers: (builder) => {
+        builder
+            .addCase(AllProduitcmdCat.pending, (state) => {
+                state.status = 'loading';
+                state.error = null
+
+            })
+            .addCase(AllProduitcmdCat.fulfilled, (state, action) => {
+                state.status = 'succeeded';
+                state.record = action.payload;
+            })
+            .addCase(AllProduitcmdCat.rejected, (state, action) => {
+                state.status = 'failed';
+                state.error = action.error.message;
+            })
+    }
+})
+
+/************************ AllProduitcmd ***********************/
+export const CMDAllProduitExport = createSlice({
+    name: "CMDAllProduit",
+    initialState,
+    reducers: {},
+    extraReducers: (builder) => {
+        builder
+            .addCase(CMDAllProduit.pending, (state) => {
+                state.status = 'loading';
+                state.error = null
+
+            })
+            .addCase(CMDAllProduit.fulfilled, (state, action) => {
+                state.status = 'succeeded';
+                state.record = action.payload;
+            })
+            .addCase(CMDAllProduit.rejected, (state, action) => {
+                state.status = 'failed';
+                state.error = action.error.message;
+            })
+    }
+})
 
 /************************ AllProduit ***********************/
 export const AllProduitExport = createSlice({

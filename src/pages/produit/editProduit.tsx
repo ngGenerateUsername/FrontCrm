@@ -45,85 +45,65 @@ import { FindCategorieById } from "state/categorie/categorie_Slice";
 
 type Overview1Props = {
   produitData?: any,
-  clickEvent:any
+  clickEvent: any
 };
 
-export default function Overview1({ produitData,clickEvent }: Overview1Props) {
-
-
-
+export default function Overview1({ produitData, clickEvent }: Overview1Props) {
   const textColor = useColorModeValue("gray.700", "white");
 
-  const [reference, setreference] = useState(produitData.reference);
-  const [nom, setnom] = useState(produitData.nom);
+  const [reference, setreference] = useState(produitData.reference );
+  const isErrorreference = reference === "";
+
+
+  const [nom, setnom] = useState(produitData.nom );
+  const isErrornom = nom === "";
+
   const [description, setdescription] = useState(produitData.description);
-  const [prixInitial, setprixInitial] = useState(produitData.prixInitial);
+  const isErrordescription = description === "";
+
+  const [prixInitial, setprixInitial] = useState(produitData.prixInitial );
+  const isErrorprixInitial = prixInitial === "";
 
 
-  // const [categorie, setcategorie] = useState('');
-  const [isErrorcategorie, setIsErrorcategorie] = useState(false);
+  const [qte, setQte] = useState(produitData.qte);
+  const isErrorQte = qte === "";
+
+  const [minQte, setMinQte] = useState(produitData.minQte);
+  const isErrorminQte = minQte === "";
+
   const [categories, setCategories] = useState([]);
   const [selectedCategoryId, setSelectedCategoryId] = useState(produitData.categorieId);
-  const [selectedDevise, setSelectedDevise] = useState(produitData.typeDevis);
-
-  const isErrorreference = reference === "";
-  const isErrornom = nom === "";
-  const isErrordescription = description === "";
-  const isErrorprixInitial = prixInitial === "";
-  const isErrorDevise = selectedDevise == "";
+  const isErrorcategorie = selectedCategoryId === '';
 
   const toast = useToast();
-
-
-  //ajout d'un champ devise
-  const devises = [
-    'TND',
-    'SAR',
-    'EUR',
-    'USD',
-    'CAD'
-  ];
-  //end ajouter
-
   let history = useHistory();
   const dispatch = useDispatch();
 
   useEffect(() => {
     if (produitData) {
-      setreference(produitData.reference);
-      setnom(produitData.nom);
-      setdescription(produitData.description);
-      setprixInitial(produitData.prixInitial);
-
+      setreference(produitData.reference );
+      setnom(produitData.nom );
+      setdescription(produitData.description );
+      setprixInitial(produitData.prixInitial );
+      setQte(produitData.qte );
+      setMinQte(produitData.minQte );
     }
   }, [produitData]);
 
   const ProduitFetch = async () => {
     try {
-      console.log(`please check my id is not null : ${produitData.id}`);
-      console.log({
-        idProduit: produitData.id,
-        reference,
-        nom,
-        description,
-        prixInitial,
-        categorie: {
-          idCategorie: selectedCategoryId
-        },
-        typeDevis: selectedDevise
-      });
-      console.log("end the check!");
+      
       const response = await dispatch(
         ModifierProduit({
           idProduit: produitData.id,
-          reference,
+           reference,
           nom,
           description,
           prixInitial,
-          categorie: {
+          qte,
+          minQte,       categorie: {
             idCategorie: selectedCategoryId
-          },
-          typeDevis: selectedDevise
+          }
         }) as any
       );
 
@@ -133,89 +113,88 @@ export default function Overview1({ produitData,clickEvent }: Overview1Props) {
       console.log("Error:", error);
     }
   };
-  //onlick function
+
   async function testproduit() {
-    if (isErrorreference === true) {
+    if (isErrorreference) {
       toast({
-        title: "reference invalid",
+        title: "Référence invalide",
         status: 'error',
         duration: 3000,
         isClosable: true,
         position: 'top',
-      })
-    } else if (isErrornom === true) {
+      });
+    } else if (isErrornom) {
       toast({
-        title: "nom invalid",
+        title: "Nom invalide",
         status: 'error',
         duration: 3000,
         isClosable: true,
         position: 'top',
-      })
-    } else if (isErrordescription === true) {
+      });
+    } else if (isErrordescription) {
       toast({
-        title: "description invalid",
+        title: "Description invalide",
         status: 'error',
         duration: 3000,
         isClosable: true,
         position: 'top',
-      })
-    } else if (isErrorprixInitial === true || !/^[0-9]+$/.test(prixInitial)) {
+      });
+    } else if (isErrorprixInitial || !/^[0-9]+$/.test(prixInitial)) {
       toast({
-        title: "prix invalid ou contient des lettres",
+        title: "Prix invalide ou contient des lettres",
         status: 'error',
         duration: 3000,
         isClosable: true,
         position: 'top',
-      })
-    } else if (isErrorcategorie === true) {
+      });
+    } else if (isErrorQte || !/^[0-9]+$/.test(qte)) {
       toast({
-        title: "categorie invalid",
+        title: "Quantité invalide ou contient des lettres",
         status: 'error',
         duration: 3000,
         isClosable: true,
         position: 'top',
-      })
-    } else
-    if(isErrorDevise == true)
-    {
+      });
+    } else if (isErrorcategorie) {
       toast({
-        title: "devise invalid",
+        title: "Catégorie invalide",
         status: 'error',
         duration: 3000,
         isClosable: true,
         position: 'top',
-      })
-    }
-    else
-    {
-    const prodId= await ProduitFetch();
-    toast({
-      title: "Produit ajouté avec succès!",
-      status: 'success',
-      duration: 3000,
-      isClosable: true,
-      position: 'top',
-    })
-      const found=categories.find((cat)=>cat.idCategorie == selectedCategoryId);
+      });
+    } else {
+      const prodId = await ProduitFetch();
+      toast({
+        title: "Produit modifié avec succès!",
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
+        position: 'top',
+      });
+
+      const found = categories.find((cat) => cat.idCategorie == selectedCategoryId);
       clickEvent({
-        idProduit:prodId,
+        idProduit: prodId,
         reference:reference,
         nom:nom,
-          description:description,
-          prixInitial:Number(prixInitial),
-          typeDevis:selectedDevise,
-          categorie:{
-            idCategorie:found.idCategorie,
-            nom:found.nom,
-            tva:Number(found.tva)
-          }
+        description:description,
+        prixInitial: Number(prixInitial),
+        qte:qte,
+        minqte: minQte,
+        categorie: {
+          idCategorie: found.idCategorie,
+          nom: found.nom,
+          tva: Number(found.tva),
+        }
       });
     }
   }
+
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await fetch('http://localhost:9998/BackendCRM/categorie');
+        const response = await fetch('http://localhost:9999/api/categorie/ALLCategories');
         const data = await response.json();
         setCategories(data);
       } catch (error) {
@@ -225,8 +204,6 @@ export default function Overview1({ produitData,clickEvent }: Overview1Props) {
 
     fetchCategories();
   }, []);
-
-
 
   return (
     <Box>
@@ -256,7 +233,6 @@ export default function Overview1({ produitData,clickEvent }: Overview1Props) {
             <TabPanels mt="24px" maxW={{ md: "90%", lg: "100%" }} mx="auto">
               <TabPanel w={{ sm: "330px", md: "700px", lg: "850px" }} mx="auto">
                 <Box>
-
                   <Box>
                     <Flex direction="column" w="100%">
                       <Flex
@@ -286,7 +262,7 @@ export default function Overview1({ produitData,clickEvent }: Overview1Props) {
                             <Input
                               isRequired={true}
                               borderRadius="15px"
-                              placeholder="reference"
+                              placeholder="Référence"
                               fontSize="xs"
                               name="reference"
                               value={reference}
@@ -294,11 +270,11 @@ export default function Overview1({ produitData,clickEvent }: Overview1Props) {
                             />
                             {!isErrorreference ? (
                               <FormErrorMessage>
-                                La référence est requis.
+                                La référence est requise.
                               </FormErrorMessage>
                             ) : (
                               <FormErrorMessage>
-                                Le référence est requis.
+                                La référence est requise.
                               </FormErrorMessage>
                             )}
                           </FormControl>
@@ -312,7 +288,7 @@ export default function Overview1({ produitData,clickEvent }: Overview1Props) {
                             <Input
                               isRequired={true}
                               borderRadius="15px"
-                              placeholder="nom"
+                              placeholder="Nom"
                               fontSize="xs"
                               name="nom"
                               value={nom}
@@ -339,21 +315,19 @@ export default function Overview1({ produitData,clickEvent }: Overview1Props) {
                             <Input
                               isRequired={true}
                               borderRadius="15px"
-                              placeholder="description"
+                              placeholder="Description"
                               fontSize="xs"
                               name="description"
                               value={description}
                               onChange={(e) => setdescription(e.target.value)}
                             />
-
-
                             {!isErrordescription ? (
                               <FormErrorMessage>
-                                Le description est requis.
+                                La description est requise.
                               </FormErrorMessage>
                             ) : (
                               <FormErrorMessage>
-                                Le description est requis.
+                                La description est requise.
                               </FormErrorMessage>
                             )}
                           </FormControl>
@@ -363,12 +337,12 @@ export default function Overview1({ produitData,clickEvent }: Overview1Props) {
                               color={textColor}
                               fontSize="xs"
                               fontWeight="bold">
-                              Prix
+                              Prix Initial
                             </FormLabel>
                             <Input
                               isRequired={true}
                               borderRadius="15px"
-                              placeholder="prix"
+                              placeholder="Prix Initial"
                               fontSize="xs"
                               name="prixInitial"
                               value={prixInitial}
@@ -376,16 +350,68 @@ export default function Overview1({ produitData,clickEvent }: Overview1Props) {
                             />
                             {!isErrorprixInitial ? (
                               <FormErrorMessage>
-                                Le prix est requis.
+                                Le prix initial est requis.
                               </FormErrorMessage>
                             ) : (
                               <FormErrorMessage>
-                                Le prix est requis.
+                                Le prix initial est requis.
                               </FormErrorMessage>
                             )}
                           </FormControl>
 
+                          <FormControl isInvalid={isErrorQte}>
+                            <FormLabel
+                              color={textColor}
+                              fontSize="xs"
+                              fontWeight="bold">
+                              Quantité
+                            </FormLabel>
+                            <Input
+                              isRequired={true}
+                              borderRadius="15px"
+                              placeholder="Quantité"
+                              fontSize="xs"
+                              name="quantité"
+                              value={qte}
+                              onChange={(e) => setQte(e.target.value)}
+                            />
+                            {!isErrorQte ? (
+                              <FormErrorMessage>
+                                La quantité est requise.
+                              </FormErrorMessage>
+                            ) : (
+                              <FormErrorMessage>
+                                La quantité est requise.
+                              </FormErrorMessage>
+                            )}
+                          </FormControl>
 
+                          <FormControl isInvalid={isErrorminQte}>
+                            <FormLabel
+                              color={textColor}
+                              fontSize="xs"
+                              fontWeight="bold">
+                              Quantité Min
+                            </FormLabel>
+                            <Input
+                              isRequired={true}
+                              borderRadius="15px"
+                              placeholder="Quantité Min"
+                              fontSize="xs"
+                              name="quantitémin"
+                              value={minQte}
+                              onChange={(e) => setMinQte(e.target.value)}
+                            />
+                            {!isErrorminQte ? (
+                              <FormErrorMessage>
+                                La quantité minimale est requise.
+                              </FormErrorMessage>
+                            ) : (
+                              <FormErrorMessage>
+                                La quantité minimale est requise.
+                              </FormErrorMessage>
+                            )}
+                          </FormControl>
 
                           <FormControl isInvalid={isErrorcategorie}>
                             <FormLabel
@@ -402,64 +428,25 @@ export default function Overview1({ produitData,clickEvent }: Overview1Props) {
                               value={selectedCategoryId} // Utilisez l'ID de la catégorie sélectionnée
                               onChange={(e) => setSelectedCategoryId(e.target.value)} // Met à jour l'ID de la catégorie sélectionnée
                             >
-                              <option value={produitData.categorieId}>{produitData.categorieName}</option>
-                              {
-                              categories.filter((c)=>c.idCategorie !=produitData.categorieId ).map((cat) => (
-                                <option key={cat.id} value={cat.idCategorie}>
-                                  {cat.nom}
-                                </option>
-                              ))}
+                              <option value={produitData?.idCategorie}>{produitData?.categorieName}</option>
+                              {categories.filter((c) => c.idCategorie !== produitData?.idCategorie)
+                                .map((cat) => (
+                                  <option key={cat.id} value={cat.idCategorie}>
+                                    {cat.nom}
+                                  </option>
+                                ))}
                             </Select>
 
                             {!isErrorcategorie ? (
                               <FormErrorMessage>
-                                La categorie est requis.
+                                La catégorie est requise.
                               </FormErrorMessage>
                             ) : (
                               <FormErrorMessage>
-                                La categorie est requis.
+                                La catégorie est requise.
                               </FormErrorMessage>
                             )}
-
-
-
                           </FormControl>
-
-                          <FormControl isInvalid={isErrorDevise}>
-                            <FormLabel
-                              color={textColor}
-                              fontSize="xs"
-                              fontWeight="bold">
-                              Catégorie
-                            </FormLabel>
-                            <Select
-                              isRequired={true}
-                              borderRadius="15px"
-                              fontSize="xs"
-                              name="selectedCategoryId"
-                              value={selectedDevise} // Utilisez l'ID de la catégorie sélectionnée
-                              onChange={(e) => setSelectedDevise(e.target.value)} // Met à jour l'ID de la catégorie sélectionnée
-                            >
-                              <option value={produitData.typeDevis}>{produitData.typeDevis}</option>
-                              { devises.filter(d=>d != produitData.typeDevis).map((dev) => (
-                                <option value={dev}>
-                                  {dev}
-                                </option>
-                              ))}
-                            </Select>
-
-                            {!isErrorDevise ? (
-                              <FormErrorMessage>
-                                Devise est requis.
-                              </FormErrorMessage>
-                            ) : (
-                              <FormErrorMessage>
-                                Devise est requis.
-                              </FormErrorMessage>
-                            )}
-
-                          </FormControl>
-
                         </Stack>
                       </Flex>
                       <Button
@@ -478,8 +465,6 @@ export default function Overview1({ produitData,clickEvent }: Overview1Props) {
                   </Box>
                 </Box>
               </TabPanel>
-
-
             </TabPanels>
           </Tabs>
         </Flex>

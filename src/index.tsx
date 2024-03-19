@@ -22,7 +22,6 @@ import store from 'state/store';
 import { Provider } from 'react-redux';
 import jwt_decode from 'jwt-decode'
 import FactureLayout from './layouts/facture'
-import DevisLayout from './layouts/devis'
 import factureLayout from './layouts/facture';
 import ProduitLayout from './layouts/produit';
 
@@ -44,14 +43,13 @@ ReactDOM.render(
 					{token_decrypt !== null && token_decrypt.aud === '[ROLE_ADMIN]' && <Route path={`/admin`} component={AdminLayout} />	}
 					{token_decrypt !== null && token_decrypt.aud === '[ROLE_COMMERCIAL]' && <Route path={`/commercial`} component={CommercialLayout} />	}
 					{token_decrypt !== null && token_decrypt.aud === '[ROLE_RESPONSABLETICKET]' && <Route path={`/respTicket`} component={CommercialLayout} />	}
-					{token_decrypt !== null && token_decrypt.aud === '[ROLE_CONTACT]' && <Route path={`/contact`} component={CommercialLayout} />	}
+					{token_decrypt !== null && token_decrypt.aud === '[ROLE_CONTACT]' && <Route path={`/contact`} component={Contact} />	}
 						{/* what is above here is useless */}
 					<Route path={`/profile`} component={ProfileLayout} />
 					<Route path={`/prop`} component={PropLayout} />
 					<Route path={`/ticket`} component={TicketLayout} />
 					<Route path={`/offre`} component={OffreLayout} />
 					<Route path={`/facture`} component={FactureLayout} />
-					<Route path={`/devis`} component={DevisLayout} />
 					<Route path={`/opportunite`} component={OpportuniteLayout} />
 		
 					<Route path={`/rtl`} component={RTLLayout} />
