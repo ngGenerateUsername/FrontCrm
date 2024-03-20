@@ -24,14 +24,21 @@ import {
     DrawerFooter,
     Select,
     useDisclosure,
-    FormLabel
+    NumberInput,
+    NumberInputField,
+    NumberInputStepper,
+    NumberIncrementStepper,
+    Icon,
+    NumberDecrementStepper,
+    FormLabel,
+    IconButton
   } from "@chakra-ui/react";
   import * as React from "react";
   import { FaAd, FaAddressBook, FaAddressCard, FaTrash } from "react-icons/fa";
   import { FaEdit } from "react-icons/fa";
   import { createColumnHelper, SortingState } from "@tanstack/react-table";
   import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faListCheck } from '@fortawesome/free-solid-svg-icons';
+import { faCheck, faListCheck, faSearch } from '@fortawesome/free-solid-svg-icons';
   
   
   // Custom components
@@ -44,6 +51,7 @@ import { faListCheck } from '@fortawesome/free-solid-svg-icons';
   import { useSelector, useDispatch } from "react-redux";
   
   import { CMDAllProduit } from "state/produit/produit_Slice";
+  import { AddLDC } from "state/Commande/Commande_slice";
 
   
   type RowObj = {
@@ -51,15 +59,11 @@ import { faListCheck } from '@fortawesome/free-solid-svg-icons';
     Domaine: string;
     id: number;
   };
-  
-  
-  //const columnHelper = createColumnHelper<RowObj>();
-  
-  // const columns = columnsDataCheck;
+
   export default function CheckTable2() {
     const textColor = useColorModeValue("secondaryGray.900", "white");
     const borderColor = useColorModeValue("gray.200", "whiteAlpha.100");
-  
+    const  [Qte, setQte] = useState("");
     
     let history = useHistory();
   
@@ -74,39 +78,30 @@ import { faListCheck } from '@fortawesome/free-solid-svg-icons';
     console.log(record, status);
     const [selectedCategoryId, setSelectedCategoryId] = useState("");
     const [categories, setCategories] = useState([]);
-
-
     const found=categories.find((cat)=>cat.idCategorie == selectedCategoryId);
 
     //add new state
     const [recordState,setRecordState]=useState(record);
+
+    const commmandprod = async (idProduit: number) => { 
+      const QteValue = Number(Qte); 
+
+      const s = await dispatch(
+        AddLDC({
+          Qte:QteValue
+        }) as any
+      )
+    };
+    
+  
+  
   
     useEffect(()=>{ setRecordState(record) },[record]);
-  
-    const { isOpen, onOpen, onClose } = useDisclosure();
-    const {
-      isOpen: isOpenn,
-      onOpen: onOpenn,
-      onClose: onClosee,
-    } = useDisclosure();
 
-    const [showInput, setShowInput] = useState(false); // State to track whether to show the input field
-
-    const handleListCheckClick = () => {
-      setShowInput(true); // Set showInput to true when faListCheck is clicked
-    };
-  
     //end state added
   
-    const { status: statusCommerciaux, record: recordCommerciaux } = useSelector(
-      (state: any) => state.CommerciauxPerEntrepriseExport
-    );
-    const { status:statusCLientsOfMyEntrepriseJustClients, record:recordCLientsOfMyEntrepriseJustClients } = useSelector(
-      (state: any) => state.CLientsOfMyEntrepriseJustClientsExport
-    );
   
   
-    const [idRelation, setidRelation] = useState("");
   useEffect(() => {
   const fetchProductsByCategory = async () => {
     try {
@@ -126,6 +121,7 @@ import { faListCheck } from '@fortawesome/free-solid-svg-icons';
 
   fetchProductsByCategory();
 }, [selectedCategoryId]);
+
 
      useEffect(() => {
     const fetchCategories = async () => {
@@ -286,29 +282,35 @@ fetchCategories();
       justifyContent="space-between"
       align="center"
       fontSize={{ sm: "10px", lg: "12px" }}
-      color="gray.400"
+      color="black"
     >
       {/* Render faListCheck icon */}
-      <FontAwesomeIcon icon={faListCheck} onClick={handleListCheckClick} />
+      <NumberInput
+     fontSize={{ sm: "10px", lg: "12px" }}
+
+      min={0}
+      max={30000}
+      clampValueOnBlur={false}
+      defaultValue={0}
+      onChange={(value) => setQte(value)} 
+    >
+      <NumberInputField />
+      <NumberInputStepper>
+        <NumberIncrementStepper />
+        <NumberDecrementStepper />
+      </NumberInputStepper>
+    </NumberInput>
+    
+    <FontAwesomeIcon icon={faCheck} size="lg" onClick={() => commmandprod(e.idProduit)} />
+
+    
     </Flex>
-    {/* Conditionally render input field based on showInput state */}
-    {showInput && (
-      <input
-        type="text"
-        placeholder="Enter your value" // Placeholder text for the input field
-        // Add any additional props or event handlers for the input field as needed
-      />
-    )}
+   
   </Td>
-                        
-                        </Tr>
+
+
+            </Tr>
                       );
-
-
-
-
-
-
 
 
 
@@ -331,24 +333,31 @@ fetchCategories();
     </Flex>
            
         <Box>
-        <br/>
-                        <br/>
+        <br/><br/>
             <br/>
-            <Select
-isRequired={true}
-borderRadius="15px"
-fontSize="xs"
-name="selectedCategoryId"
-value={selectedCategoryId} // Utilisez l'ID de la catégorie sélectionnée
-onChange={(e) => setSelectedCategoryId(e.target.value)} // Met à jour l'ID de la catégorie sélectionnée
->
-<option value="">Sélectionnez une catégorie</option>
-{categories.map((cat) => (
-  <option key={cat.idCategorie} value={cat.idCategorie}>
-    {cat.nom}
-  </option>
-))}
-</Select>
+            <Flex align="center">
+
+            <FontAwesomeIcon icon={faSearch} />
+
+            <Select 
+            
+                        isRequired={true}
+                        borderRadius="15px"
+                        fontSize="xs"
+                        name="selectedCategoryId"
+                        width="250px"
+                        value={selectedCategoryId} // Utilisez l'ID de la catégorie sélectionnée
+                        onChange={(e) => setSelectedCategoryId(e.target.value)} // Met à jour l'ID de la catégorie sélectionnée
+                        >
+                          
+                        <option value="">Sélectionnez une catégorie</option>
+                        {categories.map((cat) => (
+                          <option key={cat.idCategorie} value={cat.idCategorie}>
+                            {cat.nom}
+                          </option>
+                        ))}
+            </Select>
+            </Flex>
 
           <Table variant="simple" color="gray.500" mb="24px" mt="12px">
 

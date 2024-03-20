@@ -153,6 +153,7 @@ import {
   CMDAllProduitExport,
   AllProduitcmdCatExport
 } from "./produit/produit_Slice";
+import { AddLDCExport } from "./Commande/Commande_slice";
 
 const rootReducer = combineReducers({
   /************************ Users_Slice  **************************/
@@ -321,7 +322,11 @@ const rootReducer = combineReducers({
          ModifierProduitExport: ModifierProduitExport.reducer,
          AddProduitExport:AddProduitExport.reducer,
          CMDAllProduitExport:CMDAllProduitExport.reducer,
-         AllProduitcmdCatExport:AllProduitcmdCatExport.reducer
+         AllProduitcmdCatExport:AllProduitcmdCatExport.reducer,
+      /************************ commande_Slice  **************************/
+      AddLDCExport:AddLDCExport.reducer
+
+
 
 });
 export type RootState = ReturnType<typeof rootReducer>;
