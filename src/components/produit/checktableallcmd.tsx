@@ -5,47 +5,29 @@ import {
     Box,
     Table,
     Spinner,
-    Checkbox,
     Tbody,
     Td,
     Text,
     Th,
-    Heading,
     Thead,
     Tr,
     useColorModeValue,
-    Button,
-    Drawer,
-    DrawerOverlay,
-    DrawerContent,
-    DrawerCloseButton,
-    DrawerHeader,
-    DrawerBody,
-    DrawerFooter,
+
     Select,
-    useDisclosure,
     NumberInput,
     NumberInputField,
     NumberInputStepper,
     NumberIncrementStepper,
-    Icon,
-    NumberDecrementStepper,
-    FormLabel,
-    IconButton
+    NumberDecrementStepper
   } from "@chakra-ui/react";
-  import * as React from "react";
-  import { FaAd, FaAddressBook, FaAddressCard, FaTrash } from "react-icons/fa";
-  import { FaEdit } from "react-icons/fa";
-  import { createColumnHelper, SortingState } from "@tanstack/react-table";
+  
   import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck, faListCheck, faSearch } from '@fortawesome/free-solid-svg-icons';
   
   
   // Custom components
   import Card from "components/card/Card";
-  import Menu from "components/menu/MainMenu";
   import { useEffect, useState } from "react";
-  import { Console } from "console";
   import { useHistory } from "react-router-dom";
   
   import { useSelector, useDispatch } from "react-redux";
@@ -54,19 +36,13 @@ import { faCheck, faListCheck, faSearch } from '@fortawesome/free-solid-svg-icon
   import { AddLDC } from "state/Commande/Commande_slice";
 
   
-  type RowObj = {
-    name: [string, boolean];
-    Domaine: string;
-    id: number;
-  };
+
 
   export default function CheckTable2() {
     const textColor = useColorModeValue("secondaryGray.900", "white");
     const borderColor = useColorModeValue("gray.200", "whiteAlpha.100");
     const  [Qte, setQte] = useState("");
-    
-    let history = useHistory();
-  
+
     const dispatch = useDispatch();
    
     useEffect(() => {
@@ -78,22 +54,28 @@ import { faCheck, faListCheck, faSearch } from '@fortawesome/free-solid-svg-icon
     console.log(record, status);
     const [selectedCategoryId, setSelectedCategoryId] = useState("");
     const [categories, setCategories] = useState([]);
-    const found=categories.find((cat)=>cat.idCategorie == selectedCategoryId);
 
     //add new state
     const [recordState,setRecordState]=useState(record);
 
-    const commmandprod = async (idProduit: number) => { 
-      const QteValue = Number(Qte); 
+    const commmandprod = async (idProduit:any) => { 
+      //const idProduitLong = BigInt(idProduit);
 
+console.log(idProduit);
       const s = await dispatch(
+        
         AddLDC({
-          Qte:QteValue
+          idProduit:idProduit,
+          idcontact: localStorage.getItem("user"),
+          Qte:Qte
         }) as any
+        
       )
+
     };
     
   
+
   
   
     useEffect(()=>{ setRecordState(record) },[record]);

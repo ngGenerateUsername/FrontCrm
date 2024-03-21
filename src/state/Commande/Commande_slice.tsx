@@ -21,8 +21,8 @@ export const AddLDC = createAsyncThunk(
       const { rejectWithValue } = thunkAPI;
       try {
         // Use idProduit directly from the argument list
-        const { idProduit, ...otherData } = data;
-        const response = await axios.post(`http://localhost:9999/api/Lignedecommande/AddLDC/${idProduit}`, otherData);
+        const { idProduit,idcontact, ...otherData } = data;
+        const response = await axios.post(`http://localhost:9999/api/Lignedecommande/AddLDC/${idProduit}/${idcontact}`, otherData);
         console.log(response.data);
         return response.data;
       } catch (error: any) {
