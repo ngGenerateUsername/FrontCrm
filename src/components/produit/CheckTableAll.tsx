@@ -117,10 +117,10 @@ const refreshRecord = (dataFromChild: any) => {
 // Inside the component, use `dispatch` to call the `ModifierProduit` action
 const ModifProduit = async (updatedData: any) => {
   try {
-    const { id, ...restData } = updatedData;
+    const { idProduit, ...restData } = updatedData;
 
     // Dispatch the action to update the product
-    dispatch(ModifierProduit({ id, ...restData }) as any);
+    dispatch(ModifierProduit({ idProduit, ...restData }) as any);
     
   } catch (error) {
     // Handle errors, log or show an alert
@@ -151,12 +151,12 @@ const ModifProduit = async (updatedData: any) => {
     }
   };
   const [idRelation, setidRelation] = useState("");
-  function OpenAffect(id : any, reference: any, nom : any, description : any, prixInitial : any,qte:any,minQte:any , idCategorie:any) {
-    console.log("ID sélectionné :", id); 
-    const produitToEdit = record.find((e: any) => e.idProduit === id);
+  function OpenAffect(idProduit : any, reference: any, nom : any, description : any, prixInitial : any,qte:any,minQte:any , idCategorie:any) {
+    console.log("ID sélectionné :", idProduit); 
+    const produitToEdit = record.find((e: any) => e.idProduit === idProduit);
     if (produitToEdit) {
       setEditProduitData(produitToEdit);
-      setEditItemId(id); 
+      setEditItemId(idProduit); 
       setEditItemReference(reference);
       setEditItemNom(nom);
       setEditItemDescription(description);

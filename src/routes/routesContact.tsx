@@ -6,7 +6,7 @@ import ListClientsContact from 'pages/client/ListeClientsContact'
 import CheckTable2 from 'components/produit/checktableallcmd';
 const routesContact = [
 	{
-		name: 'prodcuts',layout: '/contact',path: '/checktableallcmd',
+		name: 'produits',layout: '/contact',path: '/checktableallcmd',
 		icon: <Icon as={ImTicket} width='20px' height='20px' color='inherit' />,
 		component: CheckTable2
 	},
