@@ -17,6 +17,7 @@ import testsocket from 'pages/testSocket'
 import routesOffre from 'routes/routesOffre';
 
 import routesFacture from 'routes/routesFacture';
+import routesPanier from 'routes/routesPanier';
 
 import routesProduit from 'routes/routesProduit';
 import routesCategorie from 'routes/routesCategorie';
@@ -74,6 +75,9 @@ routesProduit.forEach(element => {
 });
 
 routesCategorie.forEach(element => {
+	routes.push(element)
+});
+routesPanier.forEach(element => {
 	routes.push(element)
 });
 

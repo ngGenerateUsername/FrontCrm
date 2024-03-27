@@ -14,7 +14,7 @@ import Kanban from'pages/Test';
 
 
 
-const routesMe = [
+const routesCommercial = [
 	{
 		name: 'Mon entreprise',layout: '/commercial',path: '/company',
 		icon: <Icon as={MdApartment} width='20px' height='20px' color='inherit' />,
@@ -77,4 +77,4 @@ const routesMe = [
 
 ];
 
-export default routesMe;
+export default routesCommercial;

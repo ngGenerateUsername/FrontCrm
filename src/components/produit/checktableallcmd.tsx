@@ -41,6 +41,8 @@ import { useSelector, useDispatch } from "react-redux";
 
 import { CMDAllProduit } from "state/produit/produit_Slice";
 import { AddLDC } from "state/Commande/Commande_slice";
+import Listepanier from "pages/Commande/Listepanier";
+import { Link, useHistory } from "react-router-dom";
 
 interface TotalPrices {
   [productId: string]: number;
@@ -69,6 +71,12 @@ export default function CheckTable2() {
   const [selectedCategoryId, setSelectedCategoryId] = useState("");
   const [categories, setCategories] = useState([]);
   const [selectedProductId, setSelectedProductId] = useState(null);
+  const history = useHistory();  
+    const handlePasserAuPanierClick = () => {
+    // Navigate to Listepanier component
+    history.push('/contact/mon_Panier');  };
+
+
   const handleSelectProduct = (idProduit: string) => {
     setSelectedProductId(idProduit);
   }
@@ -86,20 +94,55 @@ export default function CheckTable2() {
 
 
   const commmandprod = async (idProduit: any) => {
-    //const idProduitLong = BigInt(idProduit);
-
-    console.log(idProduit);
-    const s = await dispatch(
-
-      AddLDC({
-        idProduit: idProduit,
-        idcontact: localStorage.getItem("user"),
-        qte: qte
-      }) as any
-
-    )
-
+    try {
+      const response = await dispatch(
+        AddLDC({
+          idProduit: idProduit,
+          idcontact: localStorage.getItem("user"),
+          qte: qte
+        }) as any
+      );
+  
+      // Check the response message
+      if (response.payload === "Ligne de commande ajoutée") {
+        toast({
+          title: "prodiut  ajouté avec succès",
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+          position: "top",
+        });
+        openModal(idProduit); // Show modal only if LDC is added successfully
+      } else if (response.payload === "Quantité insuffisante") {
+        toast({
+          title: "Quantité insuffisante",
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+          position: "top",
+        });
+      }
+      else if (response.payload === "Ligne de commande mise à jour") {
+        toast({
+          title: "Quantité ajouté avec succès",
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+          position: "top",
+        });openModal(idProduit);
+      }
+    } catch (error) {
+      console.error("Error adding LDC:", error);
+      toast({
+        title: "Une erreur s'est produite lors de l'ajout de LDC",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+        position: "top",
+      });
+    }
   };
+  
 
   const handleQteChange = (value: string, productId: string) => {
     setqte(value); // Update quantity
@@ -321,9 +364,9 @@ export default function CheckTable2() {
                         isClosable: true,
                         position: 'top',
                       })} else{
-
+                        
                     commmandprod(e.idProduit);
-                    openModal(e.idProduit);
+                    // openModal(e.idProduit);
                   }}
                 } />
                 <Modal isOpen={isOpen} onClose={closeModal}>
@@ -341,10 +384,10 @@ export default function CheckTable2() {
                       )}
                     </ModalBody>
                     <ModalFooter>
-                      <Button colorScheme="blue" mr={3} onClick={closeModal}>
-                        Close
+                      <Button colorScheme="blue" onClick={handlePasserAuPanierClick} >
+                        passer au panier
                       </Button>
-                      <Button variant="ghost">Secondary Action</Button>
+                      <Button variant="ghost"  mr={3} onClick={closeModal} >Ajouter plus de produit</Button>
                     </ModalFooter>
                   </ModalContent>
                 </Modal>

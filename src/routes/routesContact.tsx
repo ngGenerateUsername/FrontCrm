@@ -4,6 +4,7 @@ import AddTicket from "pages/ticket/addTicket"
 import ListTicketsContact from 'pages/ticket/ListTicketsContact';
 import ListClientsContact from 'pages/client/ListeClientsContact'
 import CheckTable2 from 'components/produit/checktableallcmd';
+import commande from 'components/commande/commande';
 const routesContact = [
 	{
 		name: 'produits',layout: '/contact',path: '/checktableallcmd',
@@ -25,7 +26,8 @@ const routesContact = [
 		icon: <Icon as={ImTicket} width='20px' height='20px' color='inherit' />,
 		component: ListTicketsContact
 	},
-
+	
+	
 	
 ];
 

@@ -37,17 +37,53 @@ export const  AddLDC  = createAsyncThunk(
       const { rejectWithValue } = thunkAPI;
       try {
         // Use idProduit directly from the argument list
-        const { idProduit,idcontact, ...otherData } = data;
-      //  const response = await axios.post(`http://localhost:9999/api/Lignedecommande/ALLldc/{{idconcat}}/${idcontact}`, otherData);
-    //    console.log(response.data);
-      //  return response.data;
+        const { idcontact, ...otherData } = data;
+       const response = await axios.get(`http://localhost:9999/api/Lignedecommande/ALLldc/${idcontact}`, otherData);
+        console.log(response.data);
+       return response.data;
       } catch (error: any) {
         return rejectWithValue(error.message);
       }
     }
   );
+  export const Deletefromcmd = createAsyncThunk(
+    "Commande/Deletefromcmd",
+    async (data: any, thunkAPI) => {
+      const { rejectWithValue } = thunkAPI;
+      try {
+        // Use idProduit directly from the argument list
+        const { idcontact } = data;
+       const response = await axios.get(`http://localhost:9999/api/Lignedecommande/Deleteitempanier/${idcontact}`);
+        console.log(response.data);
+       return response.data;
+      } catch (error: any) {
+        return rejectWithValue(error.message);
+      }
+    }
+  );
+/************************ delete ***********************/
 
-  
+  export const   DeletefromcmdExport  = createSlice({
+    name: "Delete",
+    initialState,
+    reducers: {},
+    extraReducers: (builder) => {
+        builder
+            .addCase(Deletefromcmd.pending, (state) => {
+                state.status = 'loading';
+                state.error = null
+
+            })
+            .addCase(Deletefromcmd.fulfilled, (state, action) => {
+                state.status = 'succeeded';
+                state.record = action.payload;
+            })
+            .addCase(Deletefromcmd.rejected, (state, action) => {
+                state.status = 'failed';
+                state.error = action.error.message;
+            })
+    }
+})
 /************************ AddLdc ***********************/
 export const   AddLDCExport  = createSlice({
     name: "AddLDC",
@@ -71,25 +107,25 @@ export const   AddLDCExport  = createSlice({
     }
 })
 /************************ Panier ***********************/
-// export const   PanierExport  = createSlice({
-//     name: "Panier",
-//     initialState,
-//     reducers: {},
-//     extraReducers: (builder) => {
-//         builder
-//             .addCase(Panier.pending, (state) => {
-//                 state.status = 'loading';
-//                 state.error = null
+export const   PanierExport  = createSlice({
+    name: "Panier",
+    initialState,
+    reducers: {},
+    extraReducers: (builder) => {
+        builder
+            .addCase(Panier.pending, (state) => {
+                state.status = 'loading';
+                state.error = null
 
-//             })
-//             .addCase(Panier.fulfilled, (state, action) => {
-//                 state.status = 'succeeded';
-//                 state.record = action.payload;
-//             })
-//             .addCase(Panier.rejected, (state, action) => {
-//                 state.status = 'failed';
-//                 state.error = action.error.message;
-//             })
-//     }
-// })
+            })
+            .addCase(Panier.fulfilled, (state, action) => {
+                state.status = 'succeeded';
+                state.record = action.payload;
+            })
+            .addCase(Panier.rejected, (state, action) => {
+                state.status = 'failed';
+                state.error = action.error.message;
+            })
+    }
+})
 

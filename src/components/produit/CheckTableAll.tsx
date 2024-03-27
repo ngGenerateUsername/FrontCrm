@@ -117,10 +117,10 @@ const refreshRecord = (dataFromChild: any) => {
 // Inside the component, use `dispatch` to call the `ModifierProduit` action
 const ModifProduit = async (updatedData: any) => {
   try {
-    const { idProduit, ...restData } = updatedData;
+    const { restData } = updatedData;
 
     // Dispatch the action to update the product
-    dispatch(ModifierProduit({ idProduit, ...restData }) as any);
+    dispatch(ModifierProduit({ restData }) as any);
     
   } catch (error) {
     // Handle errors, log or show an alert

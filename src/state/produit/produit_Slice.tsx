@@ -53,10 +53,11 @@ export const ModifierProduit = createAsyncThunk(
     async (data: any, thunkAPI) => {
       const { rejectWithValue } = thunkAPI;
       try {
-        const { idProduit, ...otherData } = data;
+        //const { otherData } = data;
+        console.log(data.idProduit);
+
         const response = await axios.put(
-          `http://localhost:9999/api/Produit/updateProduit/${idProduit}`,
-          otherData
+          `http://localhost:9999/api/Produit/updateProduit`,data
         );
     
     

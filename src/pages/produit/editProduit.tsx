@@ -92,7 +92,8 @@ export default function Overview1({ produitData, clickEvent }: Overview1Props) {
 
   const ProduitFetch = async () => {
     try {
-      
+      console.log(produitData);
+
       const response = await dispatch(
         ModifierProduit({
           idProduit: produitData.id,
@@ -101,13 +102,14 @@ export default function Overview1({ produitData, clickEvent }: Overview1Props) {
           description,
           prixInitial,
           qte,
-          minQte,       categorie: {
+          minQte,   
+              categorie: {
             idCategorie: selectedCategoryId
           }
         }) as any
       );
 
-      console.log("API Response:", response.payload.produitId);
+      console.log("API Response:", response.payload.idProduit);
       return response.payload.idProduit;
     } catch (error) {
       console.log("Error:", error);
