@@ -153,7 +153,13 @@ import {
   CMDAllProduitExport,
   AllProduitcmdCatExport
 } from "./produit/produit_Slice";
-import { AddLDCExport,  DeletefromcmdExport, PanierExport } from "./Commande/Commande_slice";
+import { AddLDCExport, 
+   DeletefromcmdExport, 
+   PanierExport ,
+   updateCmdQuantityExport
+  } from "./Commande/Commande_slice";
+
+
 
 const rootReducer = combineReducers({
   /************************ Users_Slice  **************************/
@@ -318,7 +324,6 @@ const rootReducer = combineReducers({
     
          /************************ Produit_Slice  **************************/
          AllProduitExport: AllProduitExport.reducer,
-         DeletefromcmdExport: DeletefromcmdExport.reducer,
          ModifierProduitExport: ModifierProduitExport.reducer,
          AddProduitExport:AddProduitExport.reducer,
          CMDAllProduitExport:CMDAllProduitExport.reducer,
@@ -326,8 +331,9 @@ const rootReducer = combineReducers({
       /************************ commande_Slice  **************************/
       AddLDCExport:AddLDCExport.reducer,
       PanierExport:PanierExport.reducer,
-
-
+      DeletefromcmdExport:DeletefromcmdExport.reducer,
+      updateCmdQuantityExport:updateCmdQuantityExport.reducer,
+      AddcommandeExport:AddActiviteExport.reducer,
 
 });
 export type RootState = ReturnType<typeof rootReducer>;

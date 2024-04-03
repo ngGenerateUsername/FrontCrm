@@ -1,42 +1,169 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Panier } from 'state/Commande/Commande_slice';
+import {  Deletefromcmd ,Panier } from 'state/Commande/Commande_slice';
 import {
   Flex,
+  Alert,
+  AlertIcon,
   Box,
   Table,
+  Spinner,
+  Checkbox,
   Tbody,
   Td,
   Text,
   Th,
+  Heading,
   Thead,
   Tr,
   useColorModeValue,
-  Spinner,
-  Alert,
-  AlertIcon
+  Button,
+  Drawer,
+  DrawerOverlay,
+  DrawerContent,
+  DrawerCloseButton,
+  DrawerHeader,
+  DrawerBody,
+  DrawerFooter,
+  Select,
+  useDisclosure,
+  FormLabel,useToast
 } from "@chakra-ui/react";
+import { FaEdit } from "react-icons/fa";
+import Editqte from "pages/Commande/editqte";
 import Card from "components/card/Card";
 import { FaTrash } from 'react-icons/fa';
+import { useTheme } from "@chakra-ui/react";
+
 
 export default function Listepanier() {
   const dispatch = useDispatch();
   const borderColor = useColorModeValue("gray.200", "whiteAlpha.100");
   const [recordState, setRecordState] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
-  // const Deletecmditeùm = async (id: string) => {
-  //   const confirmation = window.confirm("Êtes-vous sûr de vouloir supprimer ce produit ?");
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
+
+  const {
+    isOpen: isOpenn,
+    onOpen: onOpenn,
+    onClose: onClosee,
+  } = useDisclosure();
+  const [resp, setResp] = useState("");
+const[adressCommande,setadressCommande]=useState(null);
+  const [editItemId, setEditItemId] = useState(null);
+  const [editItemqte, setEditItemqte] = useState(null);
+  const { status, record } = useSelector((state: any) => state.PanierExport );
+  const [msg, setMsg] = useState('');
+  const [canProceed, setCanProceed] = useState(true)
+  const btnRef = React.useRef();
+  const toast = useToast();
+  const theme = useTheme();
+  const blueColor = theme.colors.blue[500]; 
+
+  const Deletefcmd = async (id: string) => {
+    const confirmation = window.confirm("Êtes-vous sûr de vouloir supprimer ce produit ?");
   
-  //   if (confirmation) {
-  //     console.log(id);
-  //     dispatch(Delete(id) as any)
-  //       .unwrap()
-  //       .then((res: any) => {
-  //         console.log(res);
-  //         window.location.reload();
-  //       });
-  //   }
-  // };
+    if (confirmation) {
+     
+      console.log("deleted cmd ");
+      console.log(id);
+      dispatch(Deletefromcmd(id) as any)
+        .unwrap()
+        .then((res: any) => {
+          console.log(res);
+          window.location.reload();
+        });
+    }
+  };
+
+  function whenClick(datacmd: any): void {
+    console.log(`Data command: ${JSON.stringify(datacmd)}`);
+    console.log("Edit button pressed!");
+  
+    const recordUpdate = record.map((elemRecord: any) => {
+      const updatedPrixTotale = datacmd.qte * elemRecord.prixUnitaire;
+
+      if (elemRecord.idldc === datacmd.idldc) {
+        // Update the quantity for the matching command
+        const totalPrice = record.reduce((acc: number, curr: any) => acc + curr.prixTotale, 0);
+        setTotalPrice(totalPrice);
+    
+        return { ...elemRecord, qte: datacmd.qte , prixTotale: updatedPrixTotale};
+      } else {
+        return elemRecord;
+      }
+    });
+  
+    console.log(`Updated record: ${JSON.stringify(recordUpdate)}`);
+    setRecordState(recordUpdate);
+    onClose();
+   // window.location.reload();
+
+  }
+  
+  const handleOrder = async () => {
+    // Your logic to fetch cart items and process orders
+    // This is just a placeholder for demonstration
+  
+    const userDecision = window.confirm("Some products are unavailable. Do you want to proceed with the order?");
+  
+    if (!userDecision) {
+      setCanProceed(false);
+      toast({
+        title: "Order cancelled by user",
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+        position: 'top',
+      })
+    } else {
+      toast({
+        title: "Enter delivery address",
+        status: 'info', 
+        duration: 10000,
+        isClosable: true,
+        position: 'top',
+        variant: "subtle", // Set variant to subtle
+       render: ({ onClose }) => (
+          <div  style={{
+            padding: "8px", // Padding around the input
+            fontSize: "16px", // Font size
+            borderRadius: "8px", // Border radius
+            marginBottom: "10px", // Spacing below the input
+            backgroundColor: blueColor // Background color
+          }}>
+        <input
+          type="text"
+          placeholder="Enter delivery address"
+          onChange={(e) => setadressCommande(e.target.value)}
+          style={{
+            border: "2px  blue", // Blue border
+            padding: "8px", // Padding around the input
+            fontSize: "20px", // Font size
+            borderRadius: "8px", // Border radius
+            marginBottom: "10px", // Spacing below the input
+            backgroundColor: blueColor, // Background color
+            color:"white"
+          }}
+        />
+
+
+  
+            <Button onClick={() => {
+                    console.log(adressCommande)
+
+              onClose();
+            }}
+            colorScheme="blue" >
+              Submit
+            </Button>
+          </div>
+        ),
+      });
+    }
+  };
+  
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -57,8 +184,8 @@ export default function Listepanier() {
     };
   }, [dispatch]);
 
-  const { status, record } = useSelector((state: any) => state.PanierExport);
   const textColor = useColorModeValue("secondaryGray.900", "white");
+ // const { status, record } = useSelector((state: any) => state.PanierExport);
 
   useEffect(() => {
     setRecordState(record);
@@ -187,7 +314,7 @@ export default function Listepanier() {
               color="gray.400"
             ></Flex>
             <Flex
-              // onClick={() => DeleteProduitF(e.idProduit)}
+               onClick={() => Deletefcmd(e.idldc)}
               marginLeft="40%"
               color="limegreen" // Couleur verte
               cursor="pointer"
@@ -196,6 +323,29 @@ export default function Listepanier() {
               <FaTrash size={20} /> {/* Taille de l'icône */}
             </Flex>
           </Td>
+          <Td>
+              <Flex
+                justifyContent="space-between"
+                align="center"
+                fontSize={{ sm: "10px", lg: "12px" }}
+                color="gray.400"
+              ></Flex>
+
+
+              <Flex
+                onClick={() => {
+          setEditItemId(e.idldc);
+             setEditItemqte(e.qte); 
+                 onOpen();
+                }}
+                marginLeft="40%"
+                color="yellow" // Couleur jaune
+                cursor="pointer"
+                alignItems="center"
+              >
+                <FaEdit size={20} /> {/* Taille de l'icône */}
+              </Flex>
+            </Td>
 
 
         </Tr>
@@ -206,6 +356,7 @@ export default function Listepanier() {
   return (
     <Card flexDirection="column" w="100%" px="0px" overflowX={{ sm: "scroll", lg: "hidden" }}>
       <Flex px="25px" mb="8px" align="left" justifyContent="space-between">
+
         {/* Other components or elements */}
       </Flex>
       <Box>
@@ -294,6 +445,15 @@ export default function Listepanier() {
                 suprimer
               </Text>
             </Th>
+            <Th pe="10px" borderColor={borderColor} cursor="pointer">
+              <Text
+                justifyContent="space-between"
+                align="center"
+                fontSize={{ sm: "10px", lg: "12px" }}
+                color="gray.400">
+                modifier
+              </Text>
+            </Th>
           </Thead>
           <Tbody>
             {renderData()}
@@ -302,9 +462,57 @@ export default function Listepanier() {
         <Flex justifyContent="flex-end" pr="25px">
           <Text fontWeight="bold" fontSize="lg">
             Prix Totale: {totalPrice}
+
           </Text>
+
         </Flex>
+        <br></br>
+ <Flex px="30px" mb="10px" align="right" justifyContent="flex-end">
+    <Button variant="outline" colorScheme="blue" onClick={handleOrder}>Passer Commande</Button>
+                 </Flex>
+
       </Box>
+      <Drawer
+        size="xl"
+        isOpen={isOpen}
+        placement="left"
+        onClose={ () => {
+           setEditItemId(null); 
+        onClose();}}
+        id="LeftDrawer"
+        finalFocusRef={btnRef}>
+        <DrawerOverlay />
+        <DrawerContent>
+          <DrawerCloseButton />
+          <DrawerHeader>{ "Modifier  commande" }</DrawerHeader>
+          <DrawerBody>
+              <Editqte  cmddata={{ idldc: editItemId, qte: editItemqte }} eventClick={whenClick} />
+         </DrawerBody>
+          <DrawerFooter>
+            <Button variant="outline" mr={3} onClick={onClose}>
+              Annuler
+            </Button>
+          </DrawerFooter>
+        </DrawerContent>
+      </Drawer>
+      <Drawer
+        isOpen={isOpenn}
+        placement="bottom"
+        onClose={onClosee}
+        finalFocusRef={btnRef}>
+        <DrawerOverlay />
+        <DrawerContent>
+          <DrawerCloseButton />
+         
+      
+          <DrawerFooter>
+            <Button variant="outline" mr={3} onClick={onClosee}>
+              Retour
+            </Button>
+         
+          </DrawerFooter>
+        </DrawerContent>
+      </Drawer>
     </Card>
   );
 }
