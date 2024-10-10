@@ -40,7 +40,7 @@ export const entreprisePerContact = createAsyncThunk(
         const { rejectWithValue } = thunkAPI;
         try {         
             const result = await axios.get('http://localhost:8080/api/role_entreprise/entreprisePerContact?id='+data);
-            console.log(result.data);
+            //console.log(result.data);
             return result.data;
 
         } catch (error: any) {
@@ -54,7 +54,7 @@ export const contactsPerEntreprise = createAsyncThunk(
         const { rejectWithValue } = thunkAPI;
         try {         
             const result = await axios.get("http://localhost:8080/api/role_entreprise/contactsPerEntreprise?id="+data);
-            console.log(result.data);
+           // console.log(result.data);
             return result.data;
 
         } catch (error: any) {

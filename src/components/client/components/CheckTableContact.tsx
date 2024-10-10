@@ -98,7 +98,7 @@ export default function CheckTable(props: { id: any }) {
 
 
   const [currentPage, setCurrentPage] = useState(0);
-  const itemsPerPage = 10; // Number of items to display per page
+  const itemsPerPage = 100; // Number of items to display per page
 
   const offset = currentPage * itemsPerPage;
   const currentPageData = record.slice(offset, offset + itemsPerPage);

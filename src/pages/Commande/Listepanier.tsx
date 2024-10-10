@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState,ChangeEvent } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {  Deletefromcmd ,Panier } from 'state/Commande/Commande_slice';
 import {
   Flex,
+
   Alert,
   AlertIcon,
   Box,
@@ -13,7 +14,7 @@ import {
   Td,
   Text,
   Th,
-  Heading,
+
   Thead,
   Tr,
   useColorModeValue,
@@ -21,6 +22,7 @@ import {
   Drawer,
   DrawerOverlay,
   DrawerContent,
+
   DrawerCloseButton,
   DrawerHeader,
   DrawerBody,
@@ -34,7 +36,16 @@ import Editqte from "pages/Commande/editqte";
 import Card from "components/card/Card";
 import { FaTrash } from 'react-icons/fa';
 import { useTheme } from "@chakra-ui/react";
+import { addcommande } from 'state/Commande/Commande_slice'; // Import your Redux action
+import { Link, useHistory } from "react-router-dom";
 
+import axios from 'axios';
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import MyMap from './OpenLayersMap';
+
+import MyMapnew from './leafmaptiler';
+import MapComponent from './MapComponent';
+import CheckTable2 from 'components/produit/checktableallcmd';
 
 export default function Listepanier() {
   const dispatch = useDispatch();
@@ -42,6 +53,7 @@ export default function Listepanier() {
   const [recordState, setRecordState] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
   const { isOpen, onOpen, onClose } = useDisclosure();
+  type CoordinatesChangeEvent = ChangeEvent<HTMLInputElement>;
 
 
   const {
@@ -50,7 +62,7 @@ export default function Listepanier() {
     onClose: onClosee,
   } = useDisclosure();
   const [resp, setResp] = useState("");
-const[adressCommande,setadressCommande]=useState(null);
+const[adressCommande,setadressCommande]=useState("");
   const [editItemId, setEditItemId] = useState(null);
   const [editItemqte, setEditItemqte] = useState(null);
   const { status, record } = useSelector((state: any) => state.PanierExport );
@@ -60,7 +72,13 @@ const[adressCommande,setadressCommande]=useState(null);
   const toast = useToast();
   const theme = useTheme();
   const blueColor = theme.colors.blue[500]; 
+  const [coordinates, setCoordinates] = useState({ latitude: null, longitude: null });
+  const [address, setAddress] = useState('');
+  const [mapOpened, setMapOpened] = useState(false);
 
+  const toggleMapVisibility = () => {
+    setMapOpened(!mapOpened);
+  };
   const Deletefcmd = async (id: string) => {
     const confirmation = window.confirm("Êtes-vous sûr de vouloir supprimer ce produit ?");
   
@@ -76,7 +94,7 @@ const[adressCommande,setadressCommande]=useState(null);
         });
     }
   };
-
+    const [selectedLocation, setSelectedLocation] = useState(null);
   function whenClick(datacmd: any): void {
     console.log(`Data command: ${JSON.stringify(datacmd)}`);
     console.log("Edit button pressed!");
@@ -102,70 +120,57 @@ const[adressCommande,setadressCommande]=useState(null);
 
   }
   
-  const handleOrder = async () => {
-    // Your logic to fetch cart items and process orders
-    // This is just a placeholder for demonstration
-  
-    const userDecision = window.confirm("Some products are unavailable. Do you want to proceed with the order?");
-  
-    if (!userDecision) {
-      setCanProceed(false);
-      toast({
-        title: "Order cancelled by user",
-        status: 'error',
-        duration: 3000,
-        isClosable: true,
-        position: 'top',
-      })
-    } else {
-      toast({
-        title: "Enter delivery address",
-        status: 'info', 
-        duration: 10000,
-        isClosable: true,
-        position: 'top',
-        variant: "subtle", // Set variant to subtle
-       render: ({ onClose }) => (
-          <div  style={{
-            padding: "8px", // Padding around the input
-            fontSize: "16px", // Font size
-            borderRadius: "8px", // Border radius
-            marginBottom: "10px", // Spacing below the input
-            backgroundColor: blueColor // Background color
-          }}>
-        <input
-          type="text"
-          placeholder="Enter delivery address"
-          onChange={(e) => setadressCommande(e.target.value)}
-          style={{
-            border: "2px  blue", // Blue border
-            padding: "8px", // Padding around the input
-            fontSize: "20px", // Font size
-            borderRadius: "8px", // Border radius
-            marginBottom: "10px", // Spacing below the input
-            backgroundColor: blueColor, // Background color
-            color:"white"
-          }}
-        />
+ 
+  const history = useHistory();  
+
+    const handleOrder = async (idcontact: any) => {
+      
+        const response = await dispatch(
+          addcommande({
+            idcontact: localStorage.getItem("user"),  
+            adressCommande: adressCommande
+          }) as any
+        );
+        if (response.payload === "All products are unavailable.") {
+          toast({
+            title: "pas de prodiut dispobible veuiller modifer la quantité  ",
+            status: "error",
+            duration: 3000,
+            isClosable: true,
+            position: "top",
+        onCloseComplete: () => history.push('/contact/mon_Panier')
+          });
+        } 
+        else if (response.payload === "Order success. All products are available.") {
+          toast({
+            title: "  Commande passée avec succès. ",
+            status: "success",
+            duration: 3000,
+            isClosable: true,
+            position: "top",
+            onCloseComplete: () => { setRecordState([]) ; setTotalPrice(null)}
+              //window.location.reload()
 
 
-  
-            <Button onClick={() => {
-                    console.log(adressCommande)
+          });}
+          else if (response.payload === "Order success . some  products are available and some not.") {
+            toast({
+              title: "certains prodiuts  sont dispobible   ",
+              status: "info",
+              duration: 3000,
+              isClosable: true,
+              position: "top",
+              onCloseComplete: () => window.location.reload()
 
-              onClose();
-            }}
-            colorScheme="blue" >
-              Submit
-            </Button>
-          </div>
-        ),
-      });
-    }
+            });}
+  
+
   };
   
+  
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchData
+     = async () => {
       try {
         const response = await dispatch(Panier({
           idcontact: localStorage.getItem("user"),
@@ -177,7 +182,8 @@ const[adressCommande,setadressCommande]=useState(null);
       }
     };
 
-    fetchData();
+    fetchData
+    ();
 
     return () => {
       // Cleanup function (if needed)
@@ -273,7 +279,7 @@ const[adressCommande,setadressCommande]=useState(null);
               color={textColor}
               fontSize="sm"
               fontWeight="700">
-              {e.tva}
+              {e.tva} %
             </Text>
           </Td>
           <Td>
@@ -467,11 +473,22 @@ const[adressCommande,setadressCommande]=useState(null);
 
         </Flex>
         <br></br>
- <Flex px="30px" mb="10px" align="right" justifyContent="flex-end">
-    <Button variant="outline" colorScheme="blue" onClick={handleOrder}>Passer Commande</Button>
-                 </Flex>
+        
+        <br />
+  { <Flex px="30px" mb="10px" align="right" justifyContent="flex-end">
+    <input
+      placeholder=""
+      value={adressCommande}
+      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setadressCommande(e.target.value)}
+      
+    />
+   <div> 
 
+    </div>
+    <Button variant="outline" colorScheme="blue" onClick={handleOrder}>Passer Commande</Button>
+  </Flex> }
       </Box>
+{ <MapComponent setAdressCommande={setadressCommande}/> }
       <Drawer
         size="xl"
         isOpen={isOpen}

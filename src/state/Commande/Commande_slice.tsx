@@ -78,12 +78,46 @@ export const updateCmdQuantity = createAsyncThunk(
   }
 );
 
+
 export const addcommande = createAsyncThunk(
   'commande/addcommande',
   async (data: any, thunkAPI) => { 
     const { rejectWithValue } = thunkAPI;
     try {
-      const response = await axios.put(`http://localhost:9999/commande/addcommand/`, data );
+      const {  idcontact, ...otherData } = data;
+
+      const response = await axios.post(`http://localhost:9999/commande/addcommand/${idcontact}`,otherData);
+      console.log(response.data);
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+export const mycmd = createAsyncThunk(
+  "Commande/mycmd",
+  async (data: any, thunkAPI) => {
+    const { rejectWithValue } = thunkAPI;
+    try {
+      // Use idProduit directly from the argument list
+      const { idcontact, ...otherData } = data;
+     const response = await axios.get(`http://localhost:9999/commande/mycommande/${idcontact}`, otherData);
+      console.log(response.data);
+     return response.data;
+    } catch (error: any) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+export const getcommanddetails = createAsyncThunk(
+  "Commande/getcommanddetails",
+  async (data: any, thunkAPI) => {
+    const { rejectWithValue } = thunkAPI;
+    try {
+      const { idCmd } = data;
+      const response = await axios.get(`http://localhost:9999/commande/getcommanddetails/${idCmd}`);
       console.log(response.data);
       return response.data;
     } catch (error: any) {
@@ -205,4 +239,49 @@ export const   PanierExport  = createSlice({
             })
     }
 })
+/************************ MyCmd ***********************/
 
+export const   getcommanddetailsExport  = createSlice({
+  name: "getcommanddetails",
+  initialState,
+  reducers: {},
+  extraReducers: (builder) => {
+      builder
+          .addCase(getcommanddetails.pending, (state) => {
+              state.status = 'loading';
+              state.error = null
+
+          })
+          .addCase(getcommanddetails.fulfilled, (state, action) => {
+              state.status = 'succeeded';
+              state.record = action.payload;
+          })
+          .addCase(getcommanddetails.rejected, (state, action) => {
+              state.status = 'failed';
+              state.error = action.error.message;
+          })
+  }
+})
+/************************ MyCmddetails ***********************/
+
+export const   MycmdExport  = createSlice({
+  name: "mycmd",
+  initialState,
+  reducers: {},
+  extraReducers: (builder) => {
+      builder
+          .addCase(mycmd.pending, (state) => {
+              state.status = 'loading';
+              state.error = null
+
+          })
+          .addCase(mycmd.fulfilled, (state, action) => {
+              state.status = 'succeeded';
+              state.record = action.payload;
+          })
+          .addCase(mycmd.rejected, (state, action) => {
+              state.status = 'failed';
+              state.error = action.error.message;
+          })
+  }
+})

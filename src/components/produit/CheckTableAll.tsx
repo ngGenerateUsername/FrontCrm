@@ -35,7 +35,7 @@ import { createColumnHelper, SortingState } from "@tanstack/react-table";
 // Custom components
 import Card from "components/card/Card";
 import Menu from "components/menu/MainMenu";
-import { useEffect, useState } from "react";
+import { SetStateAction, useEffect, useState } from "react";
 import { Console } from "console";
 import { useHistory } from "react-router-dom";
 
@@ -44,6 +44,8 @@ import { useSelector, useDispatch } from "react-redux";
 import { AllProduit, DeleteProduit, ModifierProduit } from "state/produit/produit_Slice";
 import Overview from "pages/produit/addProduit";
 import Overview1 from "pages/produit/editProduit";
+import { contactsPerEntreprise, entreprisePerContact } from "state/user/Role_Slice";
+import { unwrapResult } from "@reduxjs/toolkit";
 
 type RowObj = {
   name: [string, boolean];
@@ -73,6 +75,7 @@ export default function CheckTable() {
   const [editItemCategorieName,setEditItemCategorieName] = useState(null);
   const [editQte,setEditQte] = useState(null);
   const [editMinQte,seteditMinQte] = useState(null);
+  
     const [editProduitData, setEditProduitData] = useState(null);
  
   const btnRef = React.useRef();
@@ -80,22 +83,48 @@ export default function CheckTable() {
   let history = useHistory();
 
   const dispatch = useDispatch();
+  const [isLoading, setIsLoading] = useState(true); // Initial loading state (optional)
+  const [idEntreprise, setidEntreprise] = useState(null); // Or some default value
+  const [recordState, setRecordState] = useState([]);
+
  
   useEffect(() => {
-    dispatch(AllProduit() as any);
-    //all product came from prod slice
+    const fetchData = async () => {
+      try {
+        const result  = dispatch(entreprisePerContact(localStorage.getItem("user")) as any)
+        .unwrap()
+        .then((res: any) => {
+          const idUser = res.idUser; 
+          console.log(idUser); 
+          dispatch(contactsPerEntreprise(idUser) as any);
+          return idUser; 
+        });
+        result.then((id: SetStateAction<string>) => {
+          setidEntreprise(id); // Set idEntreprise
+        });    
+          
+      } catch (error) {
+        console.error("Error fetching entreprise data:", error);
+      }
+    };
+
+    fetchData();
   }, [dispatch]);
+
+  
   const { status, record } = useSelector((state: any) => state.AllProduitExport);
   console.log(record, status);
 
+  useEffect(() => {
+    dispatch(AllProduit({idEntreprise}) as any);
+    //all product came from prod slice
+  }, [dispatch,idEntreprise]);
+  useEffect(() => {
+    if (status === "succeeded") {
+      setRecordState(record);
+    }
+  }, [status, record]);
 
-  //add new state
-  const [recordState,setRecordState]=useState(record);
-
-  useEffect(()=>{ setRecordState(record) },[record]);
-
-  //manage state child to parent
-// Inside the `refreshRecord` function, update the recordState with the modified data
 const refreshRecord = (dataFromChild: any) => {
   if (editItemId) {
     const recordUpdate = recordState.map((elemRecord: any) => {

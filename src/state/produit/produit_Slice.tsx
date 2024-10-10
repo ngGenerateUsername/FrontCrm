@@ -20,11 +20,13 @@ const initialState: State = {
 
 export const AllProduit = createAsyncThunk(
     "Produit/AllProduit",
-    async ( data , thunkAPI) => {
+    async (data: { idEntreprise: number }, thunkAPI) => {
         const { rejectWithValue } = thunkAPI;
         try {
-
-            const response = await axios.get("http://localhost:9999/api/Produit/AllProduits");
+            const { idEntreprise, ...otherData } = data;
+      
+            const response = await axios.get(`http://localhost:9999/api/Produit/AllProduits/${idEntreprise}`, otherData);
+      
             console.log(response.data)
             return response.data;
         } catch (error: any) {
@@ -32,7 +34,21 @@ export const AllProduit = createAsyncThunk(
         }
     }
 )
-
+export const Panier = createAsyncThunk(
+    "Commande/Panier",
+    async (data: any, thunkAPI) => {
+      const { rejectWithValue } = thunkAPI;
+      try {
+        // Use idProduit directly from the argument list
+        const { idcontact, ...otherData } = data;
+       const response = await axios.get(`http://localhost:9999/api/Lignedecommande/ALLldc/${idcontact}`, otherData);
+        console.log(response.data);
+       return response.data;
+      } catch (error: any) {
+        return rejectWithValue(error.message);
+      }
+    }
+  );
 export const DeleteProduit = createAsyncThunk(
     "Produit/DeleteProduit",
     async ( data : any , thunkAPI) => {

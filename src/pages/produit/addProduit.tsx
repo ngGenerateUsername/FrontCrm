@@ -36,17 +36,30 @@ import {
 import { BsCircleFill } from "react-icons/bs";
 import { GrFormAdd } from "react-icons/gr";
 import { MdPersonRemoveAlt1 } from "react-icons/md";
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, SetStateAction } from "react";
 import { useHistory } from "react-router-dom";
 
 import { useDispatch } from "react-redux";
 import { AddProduit } from "state/produit/produit_Slice";
 import { FindCategorieById } from "state/categorie/categorie_Slice";
-
+import {
+  contactsPerEntreprise,
+  entreprisePerContact,
+  entreprisePerProp,
+} from "state/user/Role_Slice";
 
 export default function Overview({clickEvent}:any) {
-  const textColor = useColorModeValue("gray.700", "white");
+  const dispatch = useDispatch();
 
+  const textColor = useColorModeValue("gray.700", "white");
+    const idPromise = dispatch(entreprisePerContact(localStorage.getItem("user")) as any)
+  .unwrap()
+  .then((res: any) => {
+    const idUser = res.idUser; // Extracting res.idUser into an external variable
+    console.log(idUser); // Logging the extracted idUser
+    dispatch(contactsPerEntreprise(idUser) as any);
+    return idUser; // Returning idUser if needed
+  });
   
   const [nom, setnom] = useState("");
   const isErrornom = nom === "";
@@ -68,18 +81,29 @@ export default function Overview({clickEvent}:any) {
 
 
   const  [idEntreprise, setidEntreprise] = useState("");
-  const isidEntreprise = idEntreprise === "";
+  const isidEntreprise = idEntreprise === '' ;
 
 const [categories, setCategories] = useState([]);
 const [selectedCategoryId, setSelectedCategoryId] = useState("");
 const isErrorcategorie = selectedCategoryId === '';
 
+useEffect(() => {
+  const idPromise = dispatch(entreprisePerContact(localStorage.getItem("user")) as any)
+    .unwrap()
+    .then((res: any) => {
+      const idUser = res.idUser;
+      dispatch(contactsPerEntreprise(idUser) as any);
+      return idUser;
+    })});
 
+  idPromise.then((id: SetStateAction<string>) => {
+    setidEntreprise(id); // Set idEntreprise
+  });
 //find devise
   let history = useHistory();
-  const dispatch = useDispatch();
+  
   const toast = useToast();
- 
+
 
   const ProduitFetch = async () => {
     try {
@@ -92,7 +116,7 @@ const isErrorcategorie = selectedCategoryId === '';
           prixInitial:parseFloat(prixInitial),
           qte,
           minQte,
-          idEntreprise,
+          idEntreprise:idEntreprise,
           idCategorie: selectedCategoryId,
         }) as any
       )
@@ -177,7 +201,10 @@ const isErrorcategorie = selectedCategoryId === '';
       })
       // window.location.reload();
       const found=categories.find((cat)=>cat.idCategorie == selectedCategoryId);
-    
+ 
+   
+
+
     
       const produitData={
         idProduit:idProd,
@@ -191,7 +218,8 @@ const isErrorcategorie = selectedCategoryId === '';
           idCategorie:found.idCategorie,
           nom:found.nom,
           tva:Number(found.tva)
-        }
+        },
+        idEntreprise: idEntreprise
       }
      
       

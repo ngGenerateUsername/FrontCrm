@@ -39,7 +39,7 @@ export const DeleteCategorie = createAsyncThunk(
         const { rejectWithValue } = thunkAPI;
         try {
 
-            const response = await axios.delete("http://localhost:8082/BackendCRM/categorie/"+data);
+            const response = await axios.delete("http://localhost:9999/BackendCRM/categorie/"+data);
             console.log("API response:", response.data);
             return response.data;
         } catch (error: any) {

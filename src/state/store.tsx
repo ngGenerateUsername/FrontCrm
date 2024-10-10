@@ -155,7 +155,11 @@ import {
 } from "./produit/produit_Slice";
 import { AddLDCExport, 
    DeletefromcmdExport, 
+   MycmdExport, 
    PanierExport ,
+   
+   getcommanddetailsExport,
+   
    updateCmdQuantityExport
   } from "./Commande/Commande_slice";
 
@@ -334,6 +338,8 @@ const rootReducer = combineReducers({
       DeletefromcmdExport:DeletefromcmdExport.reducer,
       updateCmdQuantityExport:updateCmdQuantityExport.reducer,
       AddcommandeExport:AddActiviteExport.reducer,
+      MycmdExport:MycmdExport.reducer,
+      getcommanddetailsExport:getcommanddetailsExport.reducer,
 
 });
 export type RootState = ReturnType<typeof rootReducer>;

@@ -130,11 +130,12 @@ import { updateCmdQuantity } from "state/Commande/Commande_slice";
       });
     
     } else{ toast({
-      title: "Quantité edité avec succès!",
+      title: "Quantité modifier avec succès!",
       status: 'success',
-      duration: 3000,
-      isClosable: true,
+      duration: 1250,
+      isClosable: false,
       position: 'top',
+      onCloseComplete: () => window.location.reload()
     })}
      
      try{
