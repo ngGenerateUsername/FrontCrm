@@ -46,6 +46,7 @@ import MyMap from './OpenLayersMap';
 import MyMapnew from './leafmaptiler';
 import MapComponent from './MapComponent';
 import CheckTable2 from 'components/produit/checktableallcmd';
+import { ListEntreprisePerClient } from 'state/user/RelationClientUser_Slice';
 
 export default function Listepanier() {
   const dispatch = useDispatch();
@@ -75,10 +76,30 @@ const[adressCommande,setadressCommande]=useState("");
   const [coordinates, setCoordinates] = useState({ latitude: null, longitude: null });
   const [address, setAddress] = useState('');
   const [mapOpened, setMapOpened] = useState(false);
+  const [idUser, setIdUser] = useState<number>(0)
 
   const toggleMapVisibility = () => {
     setMapOpened(!mapOpened);
   };
+  const fetchData2 = async () => {
+    const idClient = localStorage.getItem("item");
+    try {
+      // Fetching idUser separately via axios call
+      const axiosRes = await axios.get(`http://localhost:8080/api/RelationClientUser/ListEntreprisePerClient?id=` + idClient);
+      console.log("res1 ", axiosRes.data);
+      
+      setIdUser(axiosRes.data[0].idUser); // This will set idUser in state
+      console.log("id user", idUser);
+  
+      return axiosRes; // Return the axiosRes object
+  
+    } catch (error) {
+      console.error("Error fetching data: ", error);
+      throw error; // Rethrow the error if you want to handle it later
+    }
+  };
+  
+
   const Deletefcmd = async (id: string) => {
     const confirmation = window.confirm("Êtes-vous sûr de vouloir supprimer ce produit ?");
   
@@ -117,20 +138,28 @@ const[adressCommande,setadressCommande]=useState("");
     setRecordState(recordUpdate);
     onClose();
    // window.location.reload();
-
   }
   
- 
+ //const idetse=localStorage.getItem("user");
+ const idcontact =localStorage.getItem("item");
+ console.log(idcontact);
+ //console.log(idetse);
+
   const history = useHistory();  
 
-    const handleOrder = async (idcontact: any) => {
-      
-        const response = await dispatch(
+    const handleOrder = async (idClient: any) => {
+      const axiosResponse = await fetchData2(); // Get the axios response
+      const response = await dispatch(
           addcommande({
-            idcontact: localStorage.getItem("user"),  
+            idClient: Number(localStorage.getItem("item")),  
+            idetse:axiosResponse.data[0].idUser,
             adressCommande: adressCommande
           }) as any
         );
+        console.log(response);
+       
+
+
         if (response.payload === "All products are unavailable.") {
           toast({
             title: "pas de prodiut dispobible veuiller modifer la quantité  ",
@@ -167,13 +196,13 @@ const[adressCommande,setadressCommande]=useState("");
 
   };
   
-  
+
   useEffect(() => {
     const fetchData
      = async () => {
       try {
         const response = await dispatch(Panier({
-          idcontact: localStorage.getItem("user"),
+          idcontact: localStorage.getItem("item"),
 
         }) as any);
         // Handle response here

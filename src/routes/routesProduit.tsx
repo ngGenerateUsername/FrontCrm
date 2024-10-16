@@ -3,6 +3,7 @@ import {MdPerson} from 'react-icons/md';
 import listProduit from 'pages/produit/listProduit';
 import ClientSelector from 'components/produit/ClientSelector';
 import CheckTable2 from 'components/produit/checktableallcmd';
+import commande from 'components/commande/commande';
 
 const routesProduit = [
 	{
@@ -16,6 +17,13 @@ const routesProduit = [
 		icon: <Icon as={MdPerson} width='20px' height='20px' color='inherit' />,
 		component:CheckTable2
 	},
+	{
+		
+		name: 'Produit',layout: '/produit',path: '/commande',
+		icon: <Icon as={MdPerson} width='20px' height='20px' color='inherit' />,
+		component:commande
+	},
+
 
 ];	
 

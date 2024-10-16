@@ -11,6 +11,8 @@ import MesActivites  from'pages/opportunity/Myactivities';
 import ContratList  from'pages/opportunity/ListContrats';
 import Contrat from'pages/opportunity/SingleContrat';
 import Kanban from'pages/Test';
+import myetsecom from 'pages/Commande/Mescommandes';
+import myetsecommand from 'pages/Commande/myetsecommande';
 
 
 
@@ -72,7 +74,11 @@ const routesCommercial = [
 		component: Contrat
 	},
 
-
+	{
+		name: 'Mes commande ',layout: '/commercial',path: '/commande-list',
+		icon: <Icon as={MdReceiptLong} width='20px' height='20px' color='inherit' />,
+		component: myetsecommand
+	},
 	
 
 ];

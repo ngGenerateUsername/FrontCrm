@@ -160,6 +160,8 @@ import { AddLDCExport,
    
    getcommanddetailsExport,
    
+   myetsecmdExport,
+   
    updateCmdQuantityExport
   } from "./Commande/Commande_slice";
 
@@ -340,6 +342,7 @@ const rootReducer = combineReducers({
       AddcommandeExport:AddActiviteExport.reducer,
       MycmdExport:MycmdExport.reducer,
       getcommanddetailsExport:getcommanddetailsExport.reducer,
+      myetsecmdExport:myetsecmdExport.reducer,
 
 });
 export type RootState = ReturnType<typeof rootReducer>;

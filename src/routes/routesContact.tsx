@@ -8,6 +8,8 @@ import commande from 'components/commande/commande';
 import mycommande from 'components/commande/mycommande';
 import Details from 'pages/Commande/Details';
 import ClientSelector from 'components/produit/ClientSelector';
+import ClientSelector3 from 'pages/Commande/ClientSelector3';
+import Mescommandes from 'pages/Commande/Mescommandes';
 const routesContact = [
 	{
 		name: 'produits',layout: '/contact',path: '/checktableallcmd',
@@ -30,12 +32,18 @@ const routesContact = [
 		component: ListTicketsContact
 	},
 	{
-		name: 'mes commandes',layout: '/contact',path: '/mes_commandes',
+		name: 'commandes',layout: '/produit',path: '/commandes',
 		icon: <Icon as={ImTicket} width='20px' height='20px' color='inherit' />,
-		component: mycommande
+		component: Mescommandes
 
 	},
 	
+	{
+		name: 'mes commandes',layout: '/contact',path: '/mes_commandes',
+		icon: <Icon as={ImTicket} width='20px' height='20px' color='inherit' />,
+		component: ClientSelector3
+
+	},
 	
 	
 ];

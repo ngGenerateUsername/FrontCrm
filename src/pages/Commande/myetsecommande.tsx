@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { SetStateAction, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getcommanddetails, mycmd } from 'state/Commande/Commande_slice';
 import {
   Flex,
   Alert,
@@ -15,66 +14,79 @@ import {
   Thead,
   Tr,
   useColorModeValue,
-  useToast
 } from "@chakra-ui/react";
 import Card from "components/card/Card";
 import { useTheme } from "@chakra-ui/react";
 import { useHistory } from "react-router-dom";
 import axios from 'axios';
+import { contactsPerEntreprise, entreprisePerContact } from 'state/user/Role_Slice';
 
-export default function Mescommandes() {
+export default function MyEnterpriseCommand() {
   const borderColor = useColorModeValue("gray.200", "whiteAlpha.100");
 
   const dispatch = useDispatch();
   const history = useHistory();
   const [selectedCommand, setSelectedCommand] = useState(null);
   const [commandDetails, setCommandDetails] = useState([]);
-
-  const [nomEntreprise, setNomEntreprise] = useState(0);  // State to store the client's name
+  const [record, setRecord] = useState([]); // Store command records here
+  const [status, setStatus] = useState('idle'); // Track loading status
+  const [nomEntreprise, setNomEntreprise] = useState("");  // Store enterprise name
+  const [idEntreprise, setidEntreprise] = useState(0);  // Store enterprise ID
   const userId = localStorage.getItem("user");
-  const fetchNomEntreprise = async () => {
-    try {
-      const response = await axios.get(`http://localhost:8080/api/RelationClientUser/ListClientsPerContact?id=${userId}`);
-      if (response.data && response.data.length > 0) {
-        setNomEntreprise(response.data[0].nomEntreprise); // Assuming the name is at index 0
-      }
-    } catch (error) {
-      console.error("Error fetching nomEntreprise: ", error);
-    }
-  };
 
   const theme = useTheme();
 
   const handleCommandClick = async (idCmd: any) => {
     try {
-      const response = await dispatch(getcommanddetails({ idCmd }) as any);
+      const response = await axios.get(`http://localhost:9999/commande/getcommanddetails/${idCmd}`);
       setSelectedCommand(idCmd);
-      setCommandDetails(response.payload);
-            fetchNomEntreprise();
-
+      setCommandDetails(response.data);
     } catch (error) {
       console.error(error);
     }
   };
 
-  const { status1 } = useSelector((state: any) => state.getcommanddetailsExport);
-
+  // Fetch enterprise ID and contacts when the component mounts
   useEffect(() => {
     const fetchData = async () => {
       try {
-        await dispatch(mycmd({
-          idcontact: localStorage.getItem("item"),
-        }) as any);
+        const result = await dispatch(entreprisePerContact(localStorage.getItem("user")) as any).unwrap();
+        const idUser = result.idUser;
+        console.log(idUser);
+        
+        // Fetch contacts for the enterprise
+        await dispatch(contactsPerEntreprise(idUser) as any);
+        
+        // Set the enterprise ID
+        setidEntreprise(Number(idUser));
       } catch (error) {
-        console.error(error);
+        console.error("Error fetching entreprise data:", error);
       }
     };
 
     fetchData();
   }, [dispatch]);
 
+  // Fetch all commands for the enterprise ID when it changes
+  useEffect(() => {
+    const fetchCommands = async () => {
+      if (idEntreprise !== 0) {
+        setStatus('loading');  // Set loading state
+        try {
+          const response = await axios.get(`http://localhost:9999/commande/getalletsecommande/${idEntreprise}`);
+          setRecord(response.data);  // Set command records
+          setStatus('succeeded');  // Mark success
+        } catch (error) {
+          console.error("Error fetching commands:", error);
+          setStatus('failed');  // Mark as failed
+        }
+      }
+    };
+
+    fetchCommands();
+  }, [idEntreprise]);
+
   const textColor = useColorModeValue("secondaryGray.900", "white");
-  const { status, record } = useSelector((state: any) => state.MycmdExport);
 
   const renderData = () => {
     if (status === "loading")
@@ -124,42 +136,19 @@ export default function Mescommandes() {
   };
 
   const renderCommandDetails = () => {
-    if (status1 === "loading")
-      return (
-        <Tr>
-          <Td colSpan={4}>
-            <Spinner size="md" />
-          </Td>
-        </Tr>
-      );
-    if (status1 === "failed")
-      return (
-        <Tr>
-          <Td colSpan={4}>
-            <Alert status="error">
-              <AlertIcon />
-              Erreur Serveur
-            </Alert>
-          </Td>
-        </Tr>
-      );
-
-    if (selectedCommand && commandDetails.length > 0) {
+    if (commandDetails.length > 0) {
       return commandDetails.map((item: any, index: number) => (
         <Tr key={index}>
-    <Td borderColor={borderColor}>{index + 1}</Td>
-    <br /><br /><br />
-
+          <Td borderColor={borderColor}>{index + 1}</Td>
           <Td>
             <Text color={textColor} fontSize="sm" fontWeight="700">
               {item.nom}
             </Text>
           </Td>
           <Td>
-          
-          
-
-
+            <Text color={textColor} fontSize="sm" fontWeight="700">
+              {item.quantite}
+            </Text>
           </Td>
           <Td>
             <Text color={textColor} fontSize="sm" fontWeight="700">
@@ -176,15 +165,13 @@ export default function Mescommandes() {
       <Flex px="25px" mb="8px" align="left" justifyContent="space-between">
       </Flex>
 
-      <Box >    
-
+      <Box>    
         <br /><br />
         <br />
-         <Text color={textColor} fontSize="sm" fontWeight="700">
-         commande de Client  {nomEntreprise}
-            </Text>
+        <Text color={textColor} fontSize="sm" fontWeight="700">
+          Commande de Client: {nomEntreprise}
+        </Text>
         <Table variant="simple" color="gray.500" mb="24px" mt="12px">
-          
           <Thead>
             <Tr>
               <Th borderColor={borderColor}>#</Th>
@@ -193,9 +180,7 @@ export default function Mescommandes() {
               <Th borderColor={borderColor}>Adresse</Th>
             </Tr>
           </Thead>
-          <Tbody>
-            {renderData()}
-          </Tbody>
+          <Tbody>{renderData()}</Tbody>
         </Table>
         {selectedCommand && (
           <>
@@ -211,9 +196,7 @@ export default function Mescommandes() {
                   <Th borderColor={borderColor}>Prix Totale</Th>
                 </Tr>
               </Thead>
-              <Tbody>
-                {renderCommandDetails()}
-              </Tbody>
+              <Tbody>{renderCommandDetails()}</Tbody>
             </Table>
           </>
         )}
