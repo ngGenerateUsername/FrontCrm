@@ -1,4 +1,4 @@
-import React, { SetStateAction, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   Flex,
@@ -14,12 +14,14 @@ import {
   Thead,
   Tr,
   useColorModeValue,
+  Button,
 } from "@chakra-ui/react";
 import Card from "components/card/Card";
 import { useTheme } from "@chakra-ui/react";
 import { useHistory } from "react-router-dom";
 import axios from 'axios';
 import { contactsPerEntreprise, entreprisePerContact } from 'state/user/Role_Slice';
+import { createbdc } from 'state/Commande/Commande_slice';
 
 export default function MyEnterpriseCommand() {
   const borderColor = useColorModeValue("gray.200", "whiteAlpha.100");
@@ -33,6 +35,10 @@ export default function MyEnterpriseCommand() {
   const [nomEntreprise, setNomEntreprise] = useState("");  // Store enterprise name
   const [idEntreprise, setidEntreprise] = useState(0);  // Store enterprise ID
   const userId = localStorage.getItem("user");
+  const [idcmd, setidcmd] = useState(0);  // Store command ID
+  const [downloadLinks, setDownloadLinks] = useState<{ [key: number]: boolean }>({});
+  const [deliveryNoteCreated, setDeliveryNoteCreated] = useState<{ [key: number]: boolean }>({});
+  const [isCommandValidated, setIsCommandValidated] = useState<{ [key: number]: boolean }>({});
 
   const theme = useTheme();
 
@@ -45,6 +51,28 @@ export default function MyEnterpriseCommand() {
       console.error(error);
     }
   };
+
+  // Function to check if the command is validated
+  const checkIfCommandIsValidated = async (idCmd: number): Promise<boolean> => {
+    try {
+      const response = await axios.get(`http://localhost:9999/commande/validate/${idCmd}`);
+      console.log('Response from validate command:', response.data);
+  
+      // If the response is directly a boolean (true/false)
+      if (typeof response.data === 'boolean') {
+        console.log('isValid (boolean):', response.data);
+        return response.data;
+      } else {
+        console.log('Response data is not a boolean or is undefined.');
+        return false;  // Default fallback if the response structure is not as expected
+      }
+    } catch (error) {
+      console.error("Error checking command validation:", error);
+      return false;
+    }
+  };
+  
+  
 
   // Fetch enterprise ID and contacts when the component mounts
   useEffect(() => {
@@ -71,21 +99,59 @@ export default function MyEnterpriseCommand() {
   useEffect(() => {
     const fetchCommands = async () => {
       if (idEntreprise !== 0) {
-        setStatus('loading');  // Set loading state
+        setStatus('loading');
         try {
           const response = await axios.get(`http://localhost:9999/commande/getalletsecommande/${idEntreprise}`);
-          setRecord(response.data);  // Set command records
-          setStatus('succeeded');  // Mark success
+          setRecord(response.data);
+          
+          const validationResults: { [key: number]: boolean } = {};
+          for (const cmd of response.data) {
+            const isValidated = await checkIfCommandIsValidated(cmd.idC);
+            validationResults[cmd.idC] = isValidated;
+          }
+          setIsCommandValidated(validationResults);  // Set the validation state
+          setStatus('succeeded');
         } catch (error) {
           console.error("Error fetching commands:", error);
-          setStatus('failed');  // Mark as failed
+          setStatus('failed');
         }
       }
     };
-
+  
     fetchCommands();
   }, [idEntreprise]);
-
+  
+  const handleCreateDeliveryNote = async (idcmd: number) => {
+    if (idcmd) {
+      const data = {
+        idcmd,  // Pass the command ID
+        dateLivraison: new Date().toISOString(),  // Delivery date
+      };
+  
+      try {
+        await dispatch(createbdc(data) as any);  // Dispatch the async thunk
+        console.log('Delivery Note Created');
+  
+        // Update the local state to immediately reflect the creation
+        setDeliveryNoteCreated(prevState => ({
+          ...prevState,
+          [idcmd]: true,  // Mark the command as having the delivery note created
+        }));
+  
+        // Optionally update the state to prevent further changes to this command
+        setIsCommandValidated(prevState => ({
+          ...prevState,
+          [idcmd]: true,  // Mark as validated
+        }));
+  
+      } catch (error) {
+        console.error("Failed to create delivery note", error);
+      }
+    } else {
+      console.error("No command ID provided");
+    }
+  };
+  
   const textColor = useColorModeValue("secondaryGray.900", "white");
 
   const renderData = () => {
@@ -110,7 +176,7 @@ export default function MyEnterpriseCommand() {
           </Td>
         </Tr>
       );
-
+  
     if (status === "succeeded") {
       return record.map((e: any, index: number) => (
         <Tr key={index} onClick={() => handleCommandClick(e.idC)} style={{ cursor: 'pointer' }}>
@@ -130,11 +196,33 @@ export default function MyEnterpriseCommand() {
               {e.adressCommande}
             </Text>
           </Td>
+          {/* Conditionally render the buttons */}
+          <Td>
+            <Text color={textColor} fontSize="sm" fontWeight="700">
+              {isCommandValidated[e.idC] ? (
+                // If the command is validated, show "Download Delivery Note" button
+                <text >
+                  Delivery Note already Created
+                </text>
+              ) : (
+                // If the command is not validated, show "Create Delivery Note" button
+                <Button colorScheme="green" onClick={() => handleCreateDeliveryNote(e.idC)}>
+                  Create Delivery Note
+                </Button>
+              )}
+            </Text>
+          </Td>
+  
+          <Td>
+            <Text color={textColor} fontSize="sm" fontWeight="700">
+              <Button colorScheme="blue">Create Invoice</Button>
+            </Text>
+          </Td>
         </Tr>
       ));
     }
   };
-
+  
   const renderCommandDetails = () => {
     if (commandDetails.length > 0) {
       return commandDetails.map((item: any, index: number) => (
@@ -147,7 +235,7 @@ export default function MyEnterpriseCommand() {
           </Td>
           <Td>
             <Text color={textColor} fontSize="sm" fontWeight="700">
-              {item.quantite}
+              {item.qte}
             </Text>
           </Td>
           <Td>
@@ -178,29 +266,36 @@ export default function MyEnterpriseCommand() {
               <Th borderColor={borderColor}>Prix</Th>
               <Th borderColor={borderColor}>Date Création</Th>
               <Th borderColor={borderColor}>Adresse</Th>
+              <Th borderColor={borderColor}></Th>
+              <Th borderColor={borderColor}>Action</Th>
+              <Th borderColor={borderColor}></Th>
+                 <Th borderColor={borderColor}>Action</Th>
+              <Th borderColor={borderColor}></Th>
             </Tr>
           </Thead>
           <Tbody>{renderData()}</Tbody>
         </Table>
+      </Box>
+
+      <Box>
         {selectedCommand && (
-          <>
-            <Text fontSize="xl" fontWeight="bold" mt="24px" mb="8px">
-              Détails de la Commande {selectedCommand}
+          <Box>
+            <Text color={textColor} fontSize="sm" fontWeight="700">
+              Détails de la commande #{selectedCommand}
             </Text>
-            <Table variant="simple" color="gray.500" mb="24px">
+            <Table variant="simple" color="gray.500" mb="24px" mt="12px">
               <Thead>
                 <Tr>
                   <Th borderColor={borderColor}>#</Th>
-                  <Th borderColor={borderColor}>Nom</Th>
+                  <Th borderColor={borderColor}>Nom Produit</Th>
                   <Th borderColor={borderColor}>Quantité</Th>
-                  <Th borderColor={borderColor}>Prix Totale</Th>
+                  <Th borderColor={borderColor}>Prix Total</Th>
                 </Tr>
               </Thead>
               <Tbody>{renderCommandDetails()}</Tbody>
             </Table>
-          </>
+          </Box>
         )}
-        <br /><br />
       </Box>
     </Card>
   );

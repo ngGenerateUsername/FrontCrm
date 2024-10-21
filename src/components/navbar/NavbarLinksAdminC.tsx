@@ -66,7 +66,7 @@ export default function HeaderLinksC(props: { secondary: boolean }) {
         const fetchNotifications = async () => {
             try {
                 const response = await axios.get('http://localhost:9999/api/Produit/allnotif');
-                console.log('Response from API:', response);
+              //  console.log('Response from API:', response);
 
                 if (response.data && Array.isArray(response.data)) {
                     // Filter notifications based on `identreprise`

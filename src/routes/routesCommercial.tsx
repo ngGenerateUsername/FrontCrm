@@ -13,6 +13,7 @@ import Contrat from'pages/opportunity/SingleContrat';
 import Kanban from'pages/Test';
 import myetsecom from 'pages/Commande/Mescommandes';
 import myetsecommand from 'pages/Commande/myetsecommande';
+import allbdc from 'pages/Commande/allbdc';
 
 
 
@@ -63,11 +64,11 @@ const routesCommercial = [
 		icon: <Icon as={MdReceiptLong} width='20px' height='20px' color='inherit' />,
 		component: ContratList
 	},
-	{
+	/*{
 		name: 'test ',layout: '/commercial',path: '/test',
 		icon: <Icon as={MdReceiptLong} width='20px' height='20px' color='inherit' />,
 		component: () => <Kanban />
-	},
+	},*/
 	{
 		name: 'Détails du contrat',layout: '/opportunite',path: '/details',
 		icon: <Icon as={MdPerson} width='20px' height='20px' color='inherit' />,
@@ -78,6 +79,11 @@ const routesCommercial = [
 		name: 'Mes commande ',layout: '/commercial',path: '/commande-list',
 		icon: <Icon as={MdReceiptLong} width='20px' height='20px' color='inherit' />,
 		component: myetsecommand
+	},
+	{
+		name: 'Mes Bon de commandes ',layout: '/commercial',path: '/bdc',
+		icon: <Icon as={MdReceiptLong} width='20px' height='20px' color='inherit' />,
+		component: allbdc
 	},
 	
 

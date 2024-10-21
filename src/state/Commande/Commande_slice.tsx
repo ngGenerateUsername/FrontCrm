@@ -139,8 +139,52 @@ export const myetsecmd = createAsyncThunk(
     }
   }
 );
+export const createbdc = createAsyncThunk(
+  "Commande/createbdc",
+  async (data: any, thunkAPI) => {
+    const { rejectWithValue }= thunkAPI;
+    try {
+      const { idcmd, ...otherData } = data;
+     const response = await axios.post(`http://localhost:9999/bdc/Addbdc/${idcmd}`, otherData);
+      console.log(response.data);
+     return response.data
+    } catch (error: any) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
 
- 
+export const checkbdc = createAsyncThunk(
+  "Commande/checkbdc",
+  async (data: any, thunkAPI) => {
+    const { rejectWithValue }= thunkAPI;
+    try {
+      const { idcmd, ...otherData } = data;
+     const response = await axios.get(`http://localhost:9999/commande/validate/${idcmd}`, otherData);
+      console.log(response.data);
+     return response.data
+    } catch (error: any) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+export const getallbdc = createAsyncThunk(
+  "Commande/getallbdc",
+  async (data: any, thunkAPI) => {
+    const { rejectWithValue }= thunkAPI;
+    try {
+      const { idetse, ...otherData } = data;
+     const response = await axios.get(`http://localhost:9999/bdc/getallbdc/${idetse}`, otherData);
+      console.log(response.data);
+     return response.data
+    } catch (error: any) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+
   /************************ add ***********************/
   export const   AddcommandeExport  = createSlice({
     name: "addcommande",
@@ -318,6 +362,76 @@ export const   myetsecmdExport  = createSlice({
               state.record = action.payload;
           })
           .addCase(myetsecmd.rejected, (state, action) => {
+              state.status = 'failed';
+              state.error = action.error.message;
+          })
+  }
+})
+
+ /************************ createbdc ***********************/
+ export const   createbdcExport  = createSlice({
+  name: "createbdc",
+  initialState,
+  reducers: {},
+  extraReducers: (builder) => {
+      builder
+          .addCase(createbdc.pending, (state) => {
+              state.status = 'loading';
+              state.error = null
+
+          })
+          .addCase(createbdc.fulfilled, (state, action) => {
+              state.status = 'succeeded';
+              state.record = action.payload;
+          })
+          .addCase(createbdc.rejected, (state, action) => {
+              state.status = 'failed';
+              state.error = action.error.message;
+          })
+  }
+})
+
+ /************************ checkbdc ***********************/
+ export const   checkbdcExport  = createSlice({
+  name: "checkbdc",
+  initialState,
+  reducers: {},
+  extraReducers: (builder) => {
+      builder
+          .addCase(checkbdc.pending, (state) => {
+              state.status = 'loading';
+              state.error = null
+
+          })
+          .addCase(checkbdc.fulfilled, (state, action) => {
+              state.status = 'succeeded';
+              state.record = action.payload;
+          })
+          .addCase(createbdc.rejected, (state, action) => {
+              state.status = 'failed';
+              state.error = action.error.message;
+          })
+  }
+})
+
+
+ /************************ getallbdc ***********************/
+ export const   getallbdcExport  = createSlice({
+  name: "getallbdc",
+  initialState,
+  reducers: {},
+  extraReducers: (builder) => {
+      builder
+          .addCase(getallbdc.pending, (state) => {
+              state.status = 'loading';
+              state.error = null
+
+          })
+          .addCase(getallbdc.fulfilled, (state, action) => {
+              state.status = 'succeeded';
+              state.record = action.payload;
+          })
+          .addCase(getallbdc.rejected, (state, action) => {
               state.status = 'failed';
               state.error = action.error.message;
           })

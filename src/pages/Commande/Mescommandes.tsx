@@ -99,126 +99,108 @@ export default function Mescommandes() {
         </Tr>
       );
 
-    if (status === "succeeded") {
-      return record.map((e: any, index: number) => (
-        <Tr key={index} onClick={() => handleCommandClick(e.idC)} style={{ cursor: 'pointer' }}>
-          <Td borderColor={borderColor}>{index + 1}</Td>
-          <Td>
-            <Text color={textColor} fontSize="sm" fontWeight="700">
-              {e.prixtotale} Dt
-            </Text>
-          </Td>
-          <Td>
-            <Text color={textColor} fontSize="sm" fontWeight="700">
-              {e.dateLivraison}
-            </Text>
-          </Td>
-          <Td>
-            <Text color={textColor} fontSize="sm" fontWeight="700">
-              {e.adressCommande}
-            </Text>
-          </Td>
-        </Tr>
-      ));
-    }
-  };
+      if (status === "succeeded") {
+        return record.map((e: any, index: number) => (
+          <Tr key={index} onClick={() => handleCommandClick(e.idC)} style={{ cursor: 'pointer' }}>
+            <Td borderColor={borderColor}>{index + 1}</Td>
+            <Td>
+              <Text color={textColor} fontSize="sm" fontWeight="700">
+                {e.nomClient} 
+              </Text>
+            </Td>
+            <Td>
+              <Text color={textColor} fontSize="sm" fontWeight="700">
+                {e.prixtotale} Dt
+              </Text>
+            </Td>
+            <Td>
+              <Text color={textColor} fontSize="sm" fontWeight="700">
+                {e.dateLivraison}
+              </Text>
+            </Td>
+            <Td>
+              <Text color={textColor} fontSize="sm" fontWeight="700">
+                {e.adressCommande}
+              </Text>
+            </Td>
+          </Tr>
+        ));
+      }
+    };
+  
+    const renderCommandDetails = () => {
+      if (commandDetails.length > 0) {
+        return commandDetails.map((item: any, index: number) => (
+          <Tr key={index}>
+            <Td borderColor={borderColor}>{index + 1}</Td>
+            <Td>
+              <Text color={textColor} fontSize="sm" fontWeight="700">
+                {item.nom}
+              </Text>
+            </Td>
+            <Td>
+              <Text color={textColor} fontSize="sm" fontWeight="700">
+                {item.qte}
+              </Text>
+            </Td>
+            <Td>
+              <Text color={textColor} fontSize="sm" fontWeight="700">
+                {item.prixTotale}
+              </Text>
+            </Td>
+          </Tr>
+        ));
+      }
+    };
+  
+    return (
+      <Card flexDirection="column" w="100%" px="0px" overflowX={{ sm: "scroll", lg: "hidden" }}>
+        <Flex px="25px" mb="8px" align="left" justifyContent="space-between">
+        </Flex>
+  
+        <Box>    
+          <br /><br />
+          <br />
+          <Text color={textColor} fontSize="sm" fontWeight="700">
+            Commande de Client: {nomEntreprise}
+          </Text>
+          <Table variant="simple" color="gray.500" mb="24px" mt="12px">
+            <Thead>
+              <Tr>
+                <Th borderColor={borderColor}>#</Th>
+                <Th borderColor={borderColor}>nom du Client </Th>
 
-  const renderCommandDetails = () => {
-    if (status1 === "loading")
-      return (
-        <Tr>
-          <Td colSpan={4}>
-            <Spinner size="md" />
-          </Td>
-        </Tr>
-      );
-    if (status1 === "failed")
-      return (
-        <Tr>
-          <Td colSpan={4}>
-            <Alert status="error">
-              <AlertIcon />
-              Erreur Serveur
-            </Alert>
-          </Td>
-        </Tr>
-      );
-
-    if (selectedCommand && commandDetails.length > 0) {
-      return commandDetails.map((item: any, index: number) => (
-        <Tr key={index}>
-    <Td borderColor={borderColor}>{index + 1}</Td>
-    <br /><br /><br />
-
-          <Td>
-            <Text color={textColor} fontSize="sm" fontWeight="700">
-              {item.nom}
-            </Text>
-          </Td>
-          <Td>
-          
-          
-
-
-          </Td>
-          <Td>
-            <Text color={textColor} fontSize="sm" fontWeight="700">
-              {item.prixTotale}
-            </Text>
-          </Td>
-        </Tr>
-      ));
-    }
-  };
-
-  return (
-    <Card flexDirection="column" w="100%" px="0px" overflowX={{ sm: "scroll", lg: "hidden" }}>
-      <Flex px="25px" mb="8px" align="left" justifyContent="space-between">
-      </Flex>
-
-      <Box >    
-
-        <br /><br />
-        <br />
-         <Text color={textColor} fontSize="sm" fontWeight="700">
-         commande de Client  {nomEntreprise}
-            </Text>
-        <Table variant="simple" color="gray.500" mb="24px" mt="12px">
-          
-          <Thead>
-            <Tr>
-              <Th borderColor={borderColor}>#</Th>
-              <Th borderColor={borderColor}>Prix</Th>
-              <Th borderColor={borderColor}>Date Création</Th>
-              <Th borderColor={borderColor}>Adresse</Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            {renderData()}
-          </Tbody>
-        </Table>
-        {selectedCommand && (
-          <>
-            <Text fontSize="xl" fontWeight="bold" mt="24px" mb="8px">
-              Détails de la Commande {selectedCommand}
-            </Text>
-            <Table variant="simple" color="gray.500" mb="24px">
-              <Thead>
-                <Tr>
-                  <Th borderColor={borderColor}>#</Th>
-                  <Th borderColor={borderColor}>Nom</Th>
-                  <Th borderColor={borderColor}>Quantité</Th>
-                  <Th borderColor={borderColor}>Prix Totale</Th>
-                </Tr>
-              </Thead>
-              <Tbody>
-                {renderCommandDetails()}
-              </Tbody>
-            </Table>
-          </>
-        )}
-        <br /><br />
-      </Box>
-    </Card>
-  );
-}
+                <Th borderColor={borderColor}>Prix</Th>
+                <Th borderColor={borderColor}>Date Création</Th>
+                <Th borderColor={borderColor}>Adresse</Th>
+              </Tr>
+            </Thead>
+            <Tbody>{renderData()}</Tbody>
+          </Table  > 
+          {selectedCommand && (
+            <>
+            
+              <Text fontSize="xl" fontWeight="bold" mt="24px" mb="8px">
+                Détails de la Commande {selectedCommand}
+              </Text>
+              <Table  flexDirection="column"
+              
+              variant="simple" color="gray.500" mb="24px">
+                <Thead>
+                  <Tr>
+                    <Th borderColor={borderColor}>#</Th>
+                    <Th borderColor={borderColor}>Nom</Th>
+                    <Th borderColor={borderColor}>Quantité</Th>
+                    <Th borderColor={borderColor}>Prix Totale</Th>
+                  </Tr>
+                </Thead>
+                <Tbody>{renderCommandDetails()}</Tbody>
+              </Table>
+            </>
+          )}
+          <br /><br />
+        </Box>
+      </Card>
+    );
+  }
+  
