@@ -94,7 +94,7 @@ const Bdc = (props: { bdc: any }) => {
           <Text style={styles.tableCellHeader}>Prix Total</Text>
         </View>
         <View style={styles.horizontalTable}>
-          <Text style={styles.tableCell}>{bdcdata.nomClient || 'N/A'}</Text>
+          <Text style={styles.tableCell}>{bdcdata.adressLivraison || 'N/A'}</Text>
           <Text style={styles.tableCell}>{bdcdata.dateLivraison || 'N/A'}</Text>
           <Text style={styles.tableCell}>{bdcdata.price ? bdcdata.price.toFixed(2) : 'N/A'}</Text>
         </View>
