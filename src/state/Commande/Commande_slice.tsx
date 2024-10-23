@@ -217,6 +217,23 @@ export const getallfacture = createAsyncThunk(
 );
 
 
+export const getalllf = createAsyncThunk(
+  "Commande/getalllf",
+  async (data: any, thunkAPI) => {
+    const { rejectWithValue }= thunkAPI;
+    try {
+      const { idcmd, ...otherData } = data;
+     const response = await axios.get(`http://localhost:9999/api/getalllc//${idcmd}`, otherData);
+      console.log(response.data);
+     return response.data
+    } catch (error: any) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+
+
 
   /************************ add ***********************/
   export const   AddcommandeExport  = createSlice({
@@ -494,7 +511,7 @@ export const   createinvoiceExport  = createSlice({
 })
 
 
-getallfacture
+
 export const   getallfactureExport  = createSlice({
   name: "getallfacture",
   initialState,
@@ -516,3 +533,27 @@ export const   getallfactureExport  = createSlice({
           })
   }
 })
+
+
+export const   getalllfExport  = createSlice({
+  name: "getalllf",
+  initialState,
+  reducers: {},
+  extraReducers: (builder) => {
+      builder
+          .addCase(getalllf.pending, (state) => {
+              state.status = 'loading';
+              state.error = null
+
+          })
+          .addCase(getalllf.fulfilled, (state, action) => {
+              state.status = 'succeeded';
+              state.record = action.payload;
+          })
+          .addCase(getalllf.rejected, (state, action) => {
+              state.status = 'failed';
+              state.error = action.error.message;
+          })
+  }
+})
+

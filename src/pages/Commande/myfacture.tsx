@@ -18,16 +18,38 @@ import {
 } from "@chakra-ui/react";
 import Card from "components/card/Card";
 import { contactsPerEntreprise, entreprisePerContact } from 'state/user/Role_Slice';
+import { PDFDownloadLink } from '@react-pdf/renderer'; // Import from react-pdf
+import invoicdatapage from 'pages/Invoice/invoicedata'; // Invoice component
+import axios from 'axios';
+import Invoicedatapage from 'pages/Invoice/invoicedata';
 
 export default function MyFacture() {
   const borderColor = useColorModeValue("gray.200", "whiteAlpha.100");
   const dispatch = useDispatch();
   const [idEntreprise, setIdEntreprise] = useState<number | null>(null); // Store enterprise ID
   const textColor = useColorModeValue("secondaryGray.900", "white");
+  const [generatedPdf, setGeneratedPdf] = useState<{ [id: number]: boolean }>({}); // Track generated PDFs per BDC ID
+  const [isFetching, setIsFetching] = useState(false); // Loading state for PDF generation
+  const [invoicedata, setinvoicedata] = useState(null); // State for storing the fetched invoice data
 
   // Fetch the user ID from localStorage
   const idUserFromStorage = localStorage.getItem("user");
+  const handleDownload = async (idf: number) => {
+    setIsFetching(true);  // Set loading state to true
+    console.log("id facture",idf)
+    try {
+      const response = await axios.get(`http://localhost:9999/api/getfacture/${idf}`);
+      console.log('API Response:', response.data);
 
+      setinvoicedata(response.data);  // Set the fetched invoice data to state
+      setGeneratedPdf((prevState) => ({ ...prevState, [idf]: true }));  // Mark the PDF as generated for this BDC
+
+    } catch (error) {
+      console.error('Error fetching invoice data:', error);
+    } finally {
+      setIsFetching(false);  // Set loading state to false
+    }
+  };
   // First useEffect: Fetch entreprise and contacts data
   useEffect(() => {
     const fetchData = async () => {
@@ -125,10 +147,35 @@ export default function MyFacture() {
           </Td>
           
           <Td>
-            <Text color={textColor} fontSize="sm" fontWeight="700">
-            <Button   colorScheme="teal"
-                size="sm" >Generate PDF </Button> 
-            </Text>
+            {generatedPdf[e.id] ? (
+              // If PDF is generated, show download link
+              <PDFDownloadLink
+                document={<Invoicedatapage invoice={invoicedata} />}
+                fileName={`facture.pdf`}
+              >
+                   {({ loading }) => (
+        loading ? (
+          <Button colorScheme="teal" size="sm" disabled>
+            <Spinner size="sm" /> Loading PDF...
+          </Button>
+        ) : (
+          <Button colorScheme="teal" size="sm" variant="outline">
+            Download PDF
+          </Button>
+        )
+      )}
+    </PDFDownloadLink>
+            ) : (
+              // If PDF not generated, show the generate button
+              <Button
+                colorScheme="teal"
+                size="sm"
+                onClick={() => handleDownload(Number(e.id))}
+                  // Disable button while fetching
+              >
+                {'Generate PDF'}
+              </Button>
+            )}
           </Td>
 
         </Tr>
