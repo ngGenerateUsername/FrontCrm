@@ -162,9 +162,13 @@ import { AddLDCExport,
    
    createbdcExport,
    
+   createinvoiceExport,
+   
    getallbdc,
    
    getallbdcExport,
+   
+   getallfactureExport,
    
    getcommanddetailsExport,
    
@@ -353,7 +357,9 @@ const rootReducer = combineReducers({
       myetsecmdExport:myetsecmdExport.reducer,
       createbdcExport:createbdcExport.reducer,
       checkbdcExport:checkbdcExport.reducer,
-      getallbdcExport:getallbdcExport.reducer
+      getallbdcExport:getallbdcExport.reducer,
+      createinvoiceExport:createinvoiceExport.reducer,
+      getallfactureExport:getallfactureExport.reducer
 });
 export type RootState = ReturnType<typeof rootReducer>;
 

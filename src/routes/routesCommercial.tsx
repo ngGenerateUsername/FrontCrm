@@ -1,5 +1,5 @@
 import { Icon } from '@chakra-ui/react';
-import {MdPerson,MdLeaderboard,MdSchedule,MdReceiptLong,MdAssignmentInd,MdSupervisedUserCircle,MdApartment} from 'react-icons/md';
+import {MdPerson,MdLeaderboard,MdSchedule,MdReceiptLong,MdAssignmentInd,MdSupervisedUserCircle,MdApartment, MdReceipt} from 'react-icons/md';
 import ListeClientsCommercial from 'pages/client/ListeClientsCommercial';
 import ListeContactAll from 'pages/client/ListeClientsEntreprise';
 import MyCompany from 'pages/entreprise/MyCompany';
@@ -14,6 +14,7 @@ import Kanban from'pages/Test';
 import myetsecom from 'pages/Commande/Mescommandes';
 import myetsecommand from 'pages/Commande/myetsecommande';
 import allbdc from 'pages/Commande/allbdc';
+import myfacture from 'pages/Commande/myfacture';
 
 
 
@@ -85,7 +86,11 @@ const routesCommercial = [
 		icon: <Icon as={MdReceiptLong} width='20px' height='20px' color='inherit' />,
 		component: allbdc
 	},
-	
+	{
+		name: 'Facture',layout: '/commercial',path: '/list-facture',
+		icon: <Icon as={MdReceipt } width='20px' height='20px' color='inherit' />,
+		component: myfacture
+	}	
 
 ];
 

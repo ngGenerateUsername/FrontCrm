@@ -21,7 +21,7 @@ import { useTheme } from "@chakra-ui/react";
 import { useHistory } from "react-router-dom";
 import axios from 'axios';
 import { contactsPerEntreprise, entreprisePerContact } from 'state/user/Role_Slice';
-import { createbdc } from 'state/Commande/Commande_slice';
+import { createbdc, createinvoice } from 'state/Commande/Commande_slice';
 
 export default function MyEnterpriseCommand() {
   const borderColor = useColorModeValue("gray.200", "whiteAlpha.100");
@@ -39,6 +39,9 @@ export default function MyEnterpriseCommand() {
   const [downloadLinks, setDownloadLinks] = useState<{ [key: number]: boolean }>({});
   const [deliveryNoteCreated, setDeliveryNoteCreated] = useState<{ [key: number]: boolean }>({});
   const [isCommandValidated, setIsCommandValidated] = useState<{ [key: number]: boolean }>({});
+
+  const [invoiceCreated, setinvoiceCreated] = useState<{ [key: number]: boolean }>({});
+  const [isfactureValidated, setisfactureValidated] = useState<{ [key: number]: boolean }>({});
 
   const theme = useTheme();
 
@@ -72,7 +75,24 @@ export default function MyEnterpriseCommand() {
     }
   };
   
+  const checkIffactureIsValidated = async (idCmd: number): Promise<boolean> => {
+    try {
+      const response = await axios.get(`http://localhost:9999/commande/validatef/${idCmd}`);
+      console.log('Response from validate command:', response.data);
   
+      // If the response is directly a boolean (true/false)
+      if (typeof response.data === 'boolean') {
+        console.log('isValid (boolean):', response.data);
+        return response.data;
+      } else {
+        console.log('Response data is not a boolean or is undefined.');
+        return false;  // Default fallback if the response structure is not as expected
+      }
+    } catch (error) {
+      console.error("Error checking command validation:", error);
+      return false;
+    }
+  };
 
   // Fetch enterprise ID and contacts when the component mounts
   useEffect(() => {
@@ -109,7 +129,16 @@ export default function MyEnterpriseCommand() {
             const isValidated = await checkIfCommandIsValidated(cmd.idC);
             validationResults[cmd.idC] = isValidated;
           }
-          setIsCommandValidated(validationResults);  // Set the validation state
+          setIsCommandValidated(validationResults);  
+
+          const validationResultsf: { [key: number]: boolean } = {};
+          for (const cmd of response.data) {
+            const isValidatedf = await checkIffactureIsValidated(cmd.idC);
+            validationResultsf[cmd.idC] = isValidatedf;
+          }
+          setisfactureValidated(validationResultsf); 
+
+
           setStatus('succeeded');
         } catch (error) {
           console.error("Error fetching commands:", error);
@@ -134,7 +163,7 @@ export default function MyEnterpriseCommand() {
   
         // Update the local state to immediately reflect the creation
         setDeliveryNoteCreated(prevState => ({
-          ...prevState,
+          ...prevState, 
           [idcmd]: true,  // Mark the command as having the delivery note created
         }));
   
@@ -151,6 +180,39 @@ export default function MyEnterpriseCommand() {
       console.error("No command ID provided");
     }
   };
+
+  const handlecreateinovice = async (idcmd: number) => {
+    if (idcmd) {
+      const data = {
+        idcmd,  // Pass the command ID
+      };
+      setinvoiceCreated(prevState => ({
+        ...prevState, 
+        [idcmd]: true,  // Mark the command as having the delivery note created
+      }));
+
+      // Optionally update the state to prevent further changes to this command
+      setisfactureValidated(prevState => ({
+        ...prevState,
+        [idcmd]: true,  // Mark as validated
+      }));
+      try {
+        await dispatch(createinvoice(data) as any);  // Dispatch the async thunk
+        console.log('invoice created');
+  
+     
+  
+      } catch (error) {
+        console.error("Failed to create invoice", error);
+      }
+    } else {
+      console.error("No command ID provided");
+    }
+  };
+
+
+
+
   
   const textColor = useColorModeValue("secondaryGray.900", "white");
 
@@ -183,9 +245,16 @@ export default function MyEnterpriseCommand() {
           <Td borderColor={borderColor}>{index + 1}</Td>
           <Td>
             <Text color={textColor} fontSize="sm" fontWeight="700">
+              {e.nomClient} 
+            </Text>
+          </Td>
+          <Td>
+            <Text color={textColor} fontSize="sm" fontWeight="700">
               {e.prixtotale} Dt
             </Text>
           </Td>
+     
+          
           <Td>
             <Text color={textColor} fontSize="sm" fontWeight="700">
               {e.dateLivraison}
@@ -212,12 +281,23 @@ export default function MyEnterpriseCommand() {
               )}
             </Text>
           </Td>
-  
           <Td>
             <Text color={textColor} fontSize="sm" fontWeight="700">
-              <Button colorScheme="blue">Create Invoice</Button>
+              {isfactureValidated[e.idC] ? (
+                // If the command is validated, show "Download Delivery Note" button
+                <text >
+                  facture  already Created
+                </text>
+              ) : (
+                // If the command is not validated, show "Create Delivery Note" button
+                <Button colorScheme="green"   onClick={() => handlecreateinovice(e.idC)}
+                >Create Invoice</Button>
+              )}
             </Text>
           </Td>
+
+          
+       
         </Tr>
       ));
     }
@@ -263,12 +343,13 @@ export default function MyEnterpriseCommand() {
           <Thead>
             <Tr>
               <Th borderColor={borderColor}>#</Th>
+              <Th borderColor={borderColor}>nom Client</Th>
+
               <Th borderColor={borderColor}>Prix</Th>
               <Th borderColor={borderColor}>Date Création</Th>
               <Th borderColor={borderColor}>Adresse</Th>
-              <Th borderColor={borderColor}></Th>
+              
               <Th borderColor={borderColor}>Action</Th>
-              <Th borderColor={borderColor}></Th>
                  <Th borderColor={borderColor}>Action</Th>
               <Th borderColor={borderColor}></Th>
             </Tr>

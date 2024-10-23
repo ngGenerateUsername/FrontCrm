@@ -154,6 +154,23 @@ export const createbdc = createAsyncThunk(
   }
 );
 
+export const createinvoice = createAsyncThunk(
+  "Commande/createinvoice",
+  async (data: any, thunkAPI) => {
+    const { rejectWithValue }= thunkAPI;
+    try {
+      const { idcmd, ...otherData } = data;
+     const response = await axios.post(`http://localhost:9999/api/AddFacture/${idcmd}`, otherData);
+      console.log(response.data);
+     return response.data
+    } catch (error: any) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+
+
 export const checkbdc = createAsyncThunk(
   "Commande/checkbdc",
   async (data: any, thunkAPI) => {
@@ -183,6 +200,22 @@ export const getallbdc = createAsyncThunk(
     }
   }
 );
+
+export const getallfacture = createAsyncThunk(
+  "Commande/getallfacture",
+  async (data: any, thunkAPI) => {
+    const { rejectWithValue }= thunkAPI;
+    try {
+      const { idetse, ...otherData } = data;
+     const response = await axios.get(`http://localhost:9999/api/getallfacture/${idetse}`, otherData);
+      console.log(response.data);
+     return response.data
+    } catch (error: any) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
 
 
   /************************ add ***********************/
@@ -432,6 +465,52 @@ export const   myetsecmdExport  = createSlice({
               state.record = action.payload;
           })
           .addCase(getallbdc.rejected, (state, action) => {
+              state.status = 'failed';
+              state.error = action.error.message;
+          })
+  }
+})
+
+export const   createinvoiceExport  = createSlice({
+  name: "createinvoice",
+  initialState,
+  reducers: {},
+  extraReducers: (builder) => {
+      builder
+          .addCase(createinvoice.pending, (state) => {
+              state.status = 'loading';
+              state.error = null
+
+          })
+          .addCase(createinvoice.fulfilled, (state, action) => {
+              state.status = 'succeeded';
+              state.record = action.payload;
+          })
+          .addCase(createinvoice.rejected, (state, action) => {
+              state.status = 'failed';
+              state.error = action.error.message;
+          })
+  }
+})
+
+
+getallfacture
+export const   getallfactureExport  = createSlice({
+  name: "getallfacture",
+  initialState,
+  reducers: {},
+  extraReducers: (builder) => {
+      builder
+          .addCase(getallfacture.pending, (state) => {
+              state.status = 'loading';
+              state.error = null
+
+          })
+          .addCase(getallfacture.fulfilled, (state, action) => {
+              state.status = 'succeeded';
+              state.record = action.payload;
+          })
+          .addCase(getallfacture.rejected, (state, action) => {
               state.status = 'failed';
               state.error = action.error.message;
           })

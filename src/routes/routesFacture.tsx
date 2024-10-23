@@ -16,11 +16,11 @@ import { MdPerson, MdReceipt } from 'react-icons/md';
 
 const routesFacture = [
 
-	{
+	/*{
 		name: 'Facture',layout: '/commercial',path: '/list-facture',
 		icon: <Icon as={MdReceipt } width='20px' height='20px' color='inherit' />,
 		component: ListFacture
-	},
+	},*/
 	{
 		name: 'Facture',layout: '/facture',path: '/details-facture',
 		icon: <></>,

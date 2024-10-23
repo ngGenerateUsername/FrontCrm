@@ -16,6 +16,7 @@ export default function Allbdc() {
   const [idetse, setidetse] = useState(0);  // Store enterprise ID
   const [bdcdata, setbdcdata] = useState(null); // State for storing the fetched invoice data
   const [isFetching, setIsFetching] = useState(false); // Loading state for PDF generation
+  const [generatedPdf, setGeneratedPdf] = useState<{ [id: number]: boolean }>({}); // Track generated PDFs per BDC ID
 
 
   // Fetch entreprise data and set enterprise ID
@@ -61,6 +62,8 @@ export default function Allbdc() {
     try {
       const response = await axios.get(`http://localhost:9999/bdc/getbdc/${idbdc}`);
       setbdcdata(response.data);  // Set the fetched invoice data to state
+      setGeneratedPdf((prevState) => ({ ...prevState, [idbdc]: true }));  // Mark the PDF as generated for this BDC
+
     } catch (error) {
       console.error('Error fetching invoice data:', error);
     } finally {
@@ -101,22 +104,34 @@ export default function Allbdc() {
             </Text>
           </Td>
           <Td>
-            <Button
-              colorScheme="teal"
-              size="sm"
-              onClick={() => handleDownload(Number(e.idbdc)) }  // Use the correct field name
-              >
-              {isFetching ? <Spinner size="sm" /> : 'Generate PDF'}
-            </Button>
-  
-            {bdcdata && (
-              <PDFDownloadLink  
-              
+            {generatedPdf[e.idbdc] ? (
+              // If PDF is generated, show download link
+              <PDFDownloadLink
                 document={<Bdc bdc={bdcdata} />}
                 fileName={`bdc.pdf`}
               >
-                {({ loading }) => (loading ? 'Loading PDF...' : 'Download PDF')}
-              </PDFDownloadLink>
+                   {({ loading }) => (
+        loading ? (
+          <Button colorScheme="teal" size="sm" disabled>
+            <Spinner size="sm" /> Loading PDF...
+          </Button>
+        ) : (
+          <Button colorScheme="teal" size="sm" variant="outline">
+            Download PDF
+          </Button>
+        )
+      )}
+    </PDFDownloadLink>
+            ) : (
+              // If PDF not generated, show the generate button
+              <Button
+                colorScheme="teal"
+                size="sm"
+                onClick={() => handleDownload(Number(e.idbdc))}
+                  // Disable button while fetching
+              >
+                {'Generate PDF'}
+              </Button>
             )}
           </Td>
         </Tr>
@@ -130,7 +145,7 @@ export default function Allbdc() {
 
       <Box>
         <br /><br />
-        <Text color={textColor} fontSize="sm" fontWeight="700">All BDC</Text>
+        <Text color={textColor} fontSize="sm" fontWeight="700"></Text>
 
         <Table variant="simple" color="gray.500" mb="24px" mt="12px">
           <Thead>
