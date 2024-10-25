@@ -15,7 +15,9 @@ import {
   Thead,
   Tr,
   useColorModeValue,
-  useToast
+  Button,
+  useToast,
+  Input
 } from "@chakra-ui/react";
 import Card from "components/card/Card";
 import { useTheme } from "@chakra-ui/react";
@@ -29,6 +31,7 @@ export default function Mescommandes() {
   const history = useHistory();
   const [selectedCommand, setSelectedCommand] = useState(null);
   const [commandDetails, setCommandDetails] = useState([]);
+  const [reclamationText, setReclamationText] = useState<string>("");  // Track reclamation text
 
   const [nomEntreprise, setNomEntreprise] = useState(0);  // State to store the client's name
   const userId = localStorage.getItem("user");
@@ -57,6 +60,29 @@ export default function Mescommandes() {
     }
   };
 
+  const renderReclamationInput = () => {
+      return (
+        <>
+          <Text mt="8px" fontSize="md" fontWeight="bold">
+            Entrez la réclamation pour la commande {}
+          </Text>
+          <Input
+            placeholder="Description de la réclamation"
+            value={reclamationText}
+            
+            mt="4px"
+          />
+          <Button
+            mt="8px"
+            size="sm"
+            colorScheme="green"
+          >
+            Soumettre
+          </Button>
+        </>
+      );
+    
+  };
   const { status1 } = useSelector((state: any) => state.getcommanddetailsExport);
 
   useEffect(() => {
@@ -177,6 +203,8 @@ export default function Mescommandes() {
             </Thead>
             <Tbody>{renderData()}</Tbody>
           </Table  > 
+          {renderReclamationInput()}
+
           {selectedCommand && (
             <>
             

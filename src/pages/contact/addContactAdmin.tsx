@@ -166,6 +166,10 @@ export default function Settings() {
               <option key="3" value="RESPONSABLETICKET">
                 Responsable ticket
               </option>
+              <option key="4" value="FOURNISSEUR">
+              fournisseur 
+              </option>
+
             </Select>
           </Box>
           <Box>

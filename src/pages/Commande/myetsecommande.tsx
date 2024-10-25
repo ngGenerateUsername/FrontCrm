@@ -271,12 +271,12 @@ export default function MyEnterpriseCommand() {
               {isCommandValidated[e.idC] ? (
                 // If the command is validated, show "Download Delivery Note" button
                 <text >
-                  Delivery Note already Created
+bon de commande créer
                 </text>
               ) : (
                 // If the command is not validated, show "Create Delivery Note" button
                 <Button colorScheme="green" onClick={() => handleCreateDeliveryNote(e.idC)}>
-                  Create Delivery Note
+                     créer bon de commande 
                 </Button>
               )}
             </Text>
@@ -286,12 +286,12 @@ export default function MyEnterpriseCommand() {
               {isfactureValidated[e.idC] ? (
                 // If the command is validated, show "Download Delivery Note" button
                 <text >
-                  facture  already Created
+                  facture   créée
                 </text>
               ) : (
                 // If the command is not validated, show "Create Delivery Note" button
                 <Button colorScheme="green"   onClick={() => handlecreateinovice(e.idC)}
-                >Create Invoice</Button>
+                >créer facture </Button>
               )}
             </Text>
           </Td>
