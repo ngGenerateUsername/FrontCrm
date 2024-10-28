@@ -158,6 +158,8 @@ import { AddLDCExport,
    MycmdExport, 
    PanierExport ,
    
+   addreclamationExport,
+   
    checkbdcExport,
    
    createbdcExport,
@@ -362,7 +364,8 @@ const rootReducer = combineReducers({
       getallbdcExport:getallbdcExport.reducer,
       createinvoiceExport:createinvoiceExport.reducer,
       getallfactureExport:getallfactureExport.reducer,
-      getalllfExport:getalllfExport.reducer
+      getalllfExport:getalllfExport.reducer,
+      addreclamationExport:addreclamationExport.reducer
 
 });
 export type RootState = ReturnType<typeof rootReducer>;

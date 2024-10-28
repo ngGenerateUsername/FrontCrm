@@ -233,6 +233,23 @@ export const getalllf = createAsyncThunk(
 );
 
 
+export const addreclamation = createAsyncThunk(
+  "Commande/addreclamation",
+  async (data: any, thunkAPI) => {
+    const { rejectWithValue }= thunkAPI;
+    try {
+      const { idcmd, ...otherData } = data;
+     const response = await axios.post(`http://localhost:9999/reclamation/addreclamation//${idcmd}`, otherData);
+      console.log(response.data);
+     return response.data
+    } catch (error: any) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+
+
 
 
   /************************ add ***********************/
@@ -557,3 +574,30 @@ export const   getalllfExport  = createSlice({
   }
 })
 
+
+
+
+
+
+
+export const   addreclamationExport  = createSlice({
+  name: "addreclamation",
+  initialState,
+  reducers: {},
+  extraReducers: (builder) => {
+      builder
+          .addCase(addreclamation.pending, (state) => {
+              state.status = 'loading';
+              state.error = null
+
+          })
+          .addCase(addreclamation.fulfilled, (state, action) => {
+              state.status = 'succeeded';
+              state.record = action.payload;
+          })
+          .addCase(addreclamation.rejected, (state, action) => {
+              state.status = 'failed';
+              state.error = action.error.message;
+          })
+  }
+})
