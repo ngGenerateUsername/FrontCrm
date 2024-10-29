@@ -10,6 +10,8 @@ import Details from 'pages/Commande/Details';
 import ClientSelector from 'components/produit/ClientSelector';
 import ClientSelector3 from 'pages/Commande/ClientSelector3';
 import Mescommandes from 'pages/Commande/Mescommandes';
+import ClientSelector4 from 'pages/reclamation/clientselector4';
+import Mesreclamation from 'pages/reclamation/Mesreclamation';
 const routesContact = [
 	{
 		name: 'produits',layout: '/contact',path: '/checktableallcmd',
@@ -44,7 +46,20 @@ const routesContact = [
 		component: ClientSelector3
 
 	},
-	
+
+		
+	{
+		name: 'mes reclamation',layout: '/contact',path: '/mes_reclamation',
+		icon: <Icon as={ImTicket} width='20px' height='20px' color='inherit' />,
+		component: ClientSelector4
+
+	},
+	{
+		name: 'reclamations',layout: '/produit',path: '/reclamation',
+		icon: <Icon as={ImTicket} width='20px' height='20px' color='inherit' />,
+		component: Mesreclamation
+
+	},	
 	
 ];
 

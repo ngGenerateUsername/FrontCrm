@@ -248,9 +248,51 @@ export const addreclamation = createAsyncThunk(
   }
 );
 
+export const getreclamation = createAsyncThunk(
+  "Commande/getreclamation",
+  async (data: any, thunkAPI) => {
+    const { rejectWithValue }= thunkAPI;
+    try {
+      const { idclt, ...otherData } = data;
+     const response = await axios.get(`http://localhost:9999/reclamation/getreclamationclt/${idclt}`, otherData);
+      console.log(response.data);
+     return response.data
+    } catch (error: any) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+export const getreclamationetse = createAsyncThunk(
+  "Commande/getreclamationetse",
+  async (data: any, thunkAPI) => {
+    const { rejectWithValue }= thunkAPI;
+    try {
+      const { idetse, ...otherData } = data;
+     const response = await axios.get(`http://localhost:9999/reclamation/getreclamationetse//${idetse}`, otherData);
+      console.log(response.data);
+     return response.data
+    } catch (error: any) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
 
 
-
+export const updatereclamation = createAsyncThunk(
+  "Commande/updatereclamation",
+  async (data: any, thunkAPI) => {
+    const { rejectWithValue }= thunkAPI;
+    try {
+      const { idrec, ...otherData } = data;
+     const response = await axios.put(`http://localhost:9999/reclamation/updatereclamation/${idrec}`, otherData);
+      console.log(response.data);
+     return response.data
+    } catch (error: any) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
 
   /************************ add ***********************/
   export const   AddcommandeExport  = createSlice({
@@ -601,3 +643,77 @@ export const   addreclamationExport  = createSlice({
           })
   }
 })
+
+
+export const   getreclamationExport  = createSlice({
+  name: "getreclamation",
+  initialState,
+  reducers: {},
+  extraReducers: (builder) => {
+      builder
+          .addCase(getreclamation.pending, (state) => {
+              state.status = 'loading';
+              state.error = null
+
+          })
+          .addCase(getreclamation.fulfilled, (state, action) => {
+              state.status = 'succeeded';
+              state.record = action.payload;
+          })
+          .addCase(getreclamation.rejected, (state, action) => {
+              state.status = 'failed';
+              state.error = action.error.message;
+          })
+  }
+})
+
+
+
+export const   getreclamationetseExport  = createSlice({
+  name: "getreclamationetse",
+  initialState,
+  reducers: {},
+  extraReducers: (builder) => {
+      builder
+          .addCase(getreclamationetse.pending, (state) => {
+              state.status = 'loading';
+              state.error = null
+
+          })
+          .addCase(getreclamationetse.fulfilled, (state, action) => {
+              state.status = 'succeeded';
+              state.record = action.payload;
+          })
+          .addCase(getreclamationetse.rejected, (state, action) => {
+              state.status = 'failed';
+              state.error = action.error.message;
+          })
+  }
+})
+
+
+
+
+
+export const   updatereclamationExport  = createSlice({
+  name: "updatereclamation",
+  initialState,
+  reducers: {},
+  extraReducers: (builder) => {
+      builder
+          .addCase(updatereclamation.pending, (state) => {
+              state.status = 'loading';
+              state.error = null
+
+          })
+          .addCase(updatereclamation.fulfilled, (state, action) => {
+              state.status = 'succeeded';
+              state.record = action.payload;
+          })
+          .addCase(updatereclamation.rejected, (state, action) => {
+              state.status = 'failed';
+              state.error = action.error.message;
+          })
+  }
+})
+

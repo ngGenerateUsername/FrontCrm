@@ -15,6 +15,8 @@ import myetsecom from 'pages/Commande/Mescommandes';
 import myetsecommand from 'pages/Commande/myetsecommande';
 import allbdc from 'pages/Commande/allbdc';
 import myfacture from 'pages/Commande/myfacture';
+import Mesreclamation from 'pages/reclamation/reclamtioneste';
+import reclamationetse from 'pages/reclamation/reclamtioneste';
 
 
 
@@ -90,6 +92,12 @@ const routesCommercial = [
 		name: 'Facture',layout: '/commercial',path: '/list-facture',
 		icon: <Icon as={MdReceipt } width='20px' height='20px' color='inherit' />,
 		component: myfacture
+	}	,
+
+	{
+		name: 'reclamation',layout: '/commercial',path: '/list-reclamation',
+		icon: <Icon as={MdReceipt } width='20px' height='20px' color='inherit' />,
+		component: reclamationetse
 	}	
 
 ];

@@ -276,7 +276,7 @@ bon de commande créer
               ) : (
                 // If the command is not validated, show "Create Delivery Note" button
                 <Button colorScheme="green" onClick={() => handleCreateDeliveryNote(e.idC)}>
-                     créer bon de commande 
+                     créer   bon de commande 
                 </Button>
               )}
             </Text>

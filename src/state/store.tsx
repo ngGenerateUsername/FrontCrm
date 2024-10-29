@@ -176,9 +176,14 @@ import { AddLDCExport,
    
    getcommanddetailsExport,
    
+   getreclamationExport,
+   
+   getreclamationetseExport,
+   
    myetsecmdExport,
    
-   updateCmdQuantityExport
+   updateCmdQuantityExport,
+   updatereclamationExport
   } from "./Commande/Commande_slice";
 
 
@@ -359,13 +364,23 @@ const rootReducer = combineReducers({
       MycmdExport:MycmdExport.reducer,
       getcommanddetailsExport:getcommanddetailsExport.reducer,
       myetsecmdExport:myetsecmdExport.reducer,
+            /************************ bdc_Slice  **************************/
+
       createbdcExport:createbdcExport.reducer,
       checkbdcExport:checkbdcExport.reducer,
       getallbdcExport:getallbdcExport.reducer,
+                  /************************ facture_Slice  **************************/
+
       createinvoiceExport:createinvoiceExport.reducer,
       getallfactureExport:getallfactureExport.reducer,
       getalllfExport:getalllfExport.reducer,
-      addreclamationExport:addreclamationExport.reducer
+                        /************************ reclamation_Slice  **************************/
+
+      addreclamationExport:addreclamationExport.reducer,
+      getreclamationExport:getreclamationExport.reducer,
+      getreclamationetseExport:getreclamationetseExport.reducer,
+      updatereclamationExport:updatereclamationExport.reducer
+      
 
 });
 export type RootState = ReturnType<typeof rootReducer>;
