@@ -176,6 +176,8 @@ import { AddLDCExport,
    
    getcommanddetailsExport,
    
+   getnotifbyidExport,
+   
    getreclamationExport,
    
    getreclamationetseExport,
@@ -185,6 +187,7 @@ import { AddLDCExport,
    updateCmdQuantityExport,
    updatereclamationExport
   } from "./Commande/Commande_slice";
+import { ADDAOExport } from "./AO/AO_slice";
 
 
 
@@ -364,6 +367,7 @@ const rootReducer = combineReducers({
       MycmdExport:MycmdExport.reducer,
       getcommanddetailsExport:getcommanddetailsExport.reducer,
       myetsecmdExport:myetsecmdExport.reducer,
+      getnotifbyidExport:getnotifbyidExport.reducer,
             /************************ bdc_Slice  **************************/
 
       createbdcExport:createbdcExport.reducer,
@@ -379,7 +383,8 @@ const rootReducer = combineReducers({
       addreclamationExport:addreclamationExport.reducer,
       getreclamationExport:getreclamationExport.reducer,
       getreclamationetseExport:getreclamationetseExport.reducer,
-      updatereclamationExport:updatereclamationExport.reducer
+      updatereclamationExport:updatereclamationExport.reducer,
+      ADDAOExport:ADDAOExport.reducer
       
 
 });

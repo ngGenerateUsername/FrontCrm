@@ -12,6 +12,7 @@ import ClientSelector3 from 'pages/Commande/ClientSelector3';
 import Mescommandes from 'pages/Commande/Mescommandes';
 import ClientSelector4 from 'pages/reclamation/clientselector4';
 import Mesreclamation from 'pages/reclamation/Mesreclamation';
+import ADDAO from 'pages/apple offre/AddAO';
 const routesContact = [
 	{
 		name: 'produits',layout: '/contact',path: '/checktableallcmd',
@@ -60,6 +61,12 @@ const routesContact = [
 		component: Mesreclamation
 
 	},	
+	{
+		name: 'createao',layout: '/produit',path: '/createAO',
+		icon: <Icon as={ImTicket} width='20px' height='20px' color='inherit' />,
+		component: ADDAO
+
+	},
 	
 ];
 

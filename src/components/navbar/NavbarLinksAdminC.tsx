@@ -16,9 +16,10 @@ import { MdNotificationsNone, MdInfoOutline } from 'react-icons/md';
 import { IoMdMoon, IoMdSunny } from 'react-icons/io';
 import { useHistory } from 'react-router-dom';
 import axios from 'axios';
-import PropTypes from 'prop-types';
+import PropTypes, { any } from 'prop-types';
 import { useDispatch } from 'react-redux';
 import { contactsPerEntreprise, entreprisePerContact } from 'state/user/Role_Slice';
+import { getnotifbyid } from 'state/Commande/Commande_slice';
 
 export default function HeaderLinksC(props: { secondary: boolean }) {
     const { secondary } = props;
@@ -73,9 +74,10 @@ export default function HeaderLinksC(props: { secondary: boolean }) {
                     const filteredNotifications = response.data.filter(
                         (notification: any) => notification.idetse === identreprise
                     );
-
+            console.log(filteredNotifications)
                     setNotifications(filteredNotifications);
                     setUnreadCount(filteredNotifications.length);
+
                 } else {
                     console.error('Unexpected data format:', response.data);
                 }
@@ -94,13 +96,22 @@ export default function HeaderLinksC(props: { secondary: boolean }) {
             };
         }
     }, [identreprise]); // Re-run effect when `identreprise` changes
-
       
-    // Handle click on notifications icon (reset unread count)
-    const handleNotificationsClick = () => {
-    };
+   
+           const handleNotificationsClick =async(idn:any) => {
+           
+      };
+    
+      const handleNotificationClick =async(idn:any) => {
+        const response = await axios.get(`http://localhost:9999/commande/getnotifbyid/${idn}`);
+        console.log( "response ",response.data.idproduit)
+        localStorage.setItem("idprod",response.data.idproduit)
+        history.push("/produit/createAO");
 
-    // Logout handler
+ return response.data;
+ };
+
+    // Logout handler"
     const logout = async () => {
         localStorage.clear();
         delete axios.defaults.headers.common['Authorization'];
@@ -113,7 +124,9 @@ export default function HeaderLinksC(props: { secondary: boolean }) {
     };
 
     return (
+
         <Flex
+        
             w={{ sm: '100%', md: 'auto' }}
             alignItems='center'
             flexDirection='row'
@@ -128,7 +141,7 @@ export default function HeaderLinksC(props: { secondary: boolean }) {
                 {new Date().toUTCString()}
             </Text>
             <Menu>
-                <MenuButton p='10px' onClick={handleNotificationsClick}>
+                <MenuButton p='10px' onClick={handleNotificationsClick  }>
                     <Flex position='relative'>
                         <Icon mt='px' as={MdNotificationsNone} color={navbarIcon} w='18px' h='18px' me='10px' />
                         {unreadCount > 0 && (
@@ -167,18 +180,20 @@ export default function HeaderLinksC(props: { secondary: boolean }) {
                         </Text>
                     </Flex>
                     <Flex flexDirection='column'>
-                        {notifications.map((notification, index) => (
-                            <MenuItem
-                                key={index}
-                                _hover={{ bg: 'none' }}
-                                _focus={{ bg: 'none' }}
-                                px='0'
-                                borderRadius='8px'
-                                mb='10px'
-                            >
-                                <Text>{notification.msg}</Text>
-                            </MenuItem>
-                        ))}
+                    {notifications.map((notification, index) => (
+    <MenuItem
+        key={index}
+        _hover={{ bg: 'none' }}
+        _focus={{ bg: 'none' }}
+        px='0'
+        borderRadius='8px'
+        mb='10px'
+        onClick={() => handleNotificationClick(notification.idnotif)} // Use an arrow function to call with the notification ID
+    >
+        <Text>{notification.msg}</Text>
+    </MenuItem>
+))}
+
                     </Flex>
                 </MenuList>
             </Menu>

@@ -113,9 +113,7 @@ function SignUp() {
         console.log("test 1")
         console.log(result);
         console.log(result.data);
-        const result2 = await axios.put("http://localhost:8080/api/auth/ajoutRole_entreprise",
-          { idEntreprise: params.get("entreprise"), roleUser: "ROLE_FOURNISSEUR", idContact: result.data });
-        console.log(result2);
+       
         const result3 = await axios.get("http://localhost:8080/api/contact/CodeVerification?id=" + result.data);
         console.log(result3.data);
         console.log("test 1")

@@ -294,6 +294,21 @@ export const updatereclamation = createAsyncThunk(
   }
 );
 
+export const getnotifbyid = createAsyncThunk(
+  "Commande/getnotifbyid",
+  async (data: any, thunkAPI) => {
+    const { rejectWithValue }= thunkAPI;
+    try {
+      const { idn, ...otherData } = data;
+     const response = await axios.get(`http://localhost:9999/commande/getnotifbyid//${idn}`, otherData);
+      console.log(response.data);
+     return response.data
+    } catch (error: any) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
   /************************ add ***********************/
   export const   AddcommandeExport  = createSlice({
     name: "addcommande",
@@ -716,4 +731,32 @@ export const   updatereclamationExport  = createSlice({
           })
   }
 })
+
+
+
+export const getnotifbyidExport = createSlice({
+  name: "getnotifbyid",
+  initialState,
+  reducers: {},
+  extraReducers: (builder) => {
+      builder
+          .addCase(getnotifbyid.pending, (state) => {
+              state.status = 'loading';
+              state.error = null;
+          })
+          .addCase(getnotifbyid.fulfilled, (state, action) => {
+              state.status = 'succeeded';
+              state.record = action.payload;
+          })
+          .addCase(getnotifbyid.rejected, (state, action) => {
+              state.status = 'failed';
+              state.error = action.error.message;
+          });
+  },
+});
+
+
+
+
+
 
