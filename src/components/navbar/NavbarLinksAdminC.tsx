@@ -188,7 +188,7 @@ export default function HeaderLinksC(props: { secondary: boolean }) {
         px='0'
         borderRadius='8px'
         mb='10px'
-        onClick={() => handleNotificationClick(notification.idnotif)} // Use an arrow function to call with the notification ID
+        onClick={notification.clickable ? () => handleNotificationClick(notification.idnotif) : undefined} // Only add onClick if clickable is true
     >
         <Text>{notification.msg}</Text>
     </MenuItem>

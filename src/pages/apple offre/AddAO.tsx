@@ -1,101 +1,103 @@
-import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
-import {
-  Box,
-  FormControl,
-  FormLabel,
-  Input,
-  Textarea,
-  Button,
-  Heading,
-  Flex,
-  Text,
-  Spinner,
-  useToast,
-  useColorModeValue,
-} from "@chakra-ui/react";
-import Card from "components/card/Card";
-import axios from "axios";
-import { format } from 'date-fns';
+  import React, { useState, useEffect } from 'react';
+  import {
+    Box,
+    FormControl,
+    FormLabel,
+    Input,
+    Textarea,
+    Button,
+    Heading,
+    Flex,
+    Text,
+    Spinner,
+    useToast,
+    useColorModeValue,
+    Grid,
+    Divider,
+    VStack,
+    HStack,
+    IconButton,
+  } from "@chakra-ui/react";
+  import { AddIcon } from '@chakra-ui/icons'; // Optional icon for button enhancement
+  import Card from "components/card/Card"; // Ensure this Card component has a well-defined style
+  import axios from "axios";
 
+  export default function CallForTenderForm() {
+    const [num, setNum] = useState('');
+    const [ref, setRef] = useState('');
+    const [description, setDescription] = useState('');
+    const [DateCloture, setDateCloture] = useState('');
+    const [quantite, setQuantite] = useState('');
+    const [status, setStatus] = useState('idle');
+    const [error, setError] = useState('');
+    const [categorie, setCategorie] = useState('');
+    const [nometse, setNometse] = useState('');
+    const [tva, setTVA] = useState('');
+    const [nomprod, setNomprod] = useState('');
 
-export default function CallForTenderForm() {
-  // Individual state for each form field
-  const [num, setNum] = useState('');
-  const [ref, setRef] = useState('');
-  const [description, setDescription] = useState('');
-  const [DateCloture, setDateCloture] = useState('');
-  const [quantite, setQuantite] = useState('');
-  const [status, setStatus] = useState('idle');
-  const [error, setError] = useState('');
+    const toast = useToast();
+    const textColor = useColorModeValue("gray.800", "white");
+    const borderColor = useColorModeValue("gray.300", "whiteAlpha.300");
 
-  const toast = useToast();
-  const textColor = useColorModeValue("secondaryGray.900", "white");
-  const borderColor = useColorModeValue("gray.200", "whiteAlpha.100");
-
-
-  const handleSubmit = async () => {
-    setError(''); // Reset error before submission
-  
-    // Validate each field
-    if (!num.trim()) {
-      setError("Please fill in the Num.");
-      return;
-    }
-    if (!ref.trim()) {
-      setError("Please fill in the Reference.");
-      return;
-    }
-    if (!description.trim()) {
-      setError("Please fill in the Description.");
-      return;
-    }
-    if (!DateCloture.trim()) {
-      setError("Please select the Closing Date.");
-      return;
-    }
-    if (!quantite.trim()) {
-      setError("Please fill in the Quantity.");
-      return;
-    }
-  
-    setStatus('loading');
-  
-    try {
-      // Create a Date object from the input date
-  
-      // Format the date to "dd-MM-yyyy HH:mm"
-  
-      const payload = {
-        idproduit: Number(localStorage.getItem("idprod")), // Ensure the idproduit is a number
-        description,
-        dateCloture:DateCloture, // Use the correctly formatted date
-        quantite,
-        num,
-        ref,
+    useEffect(() => {
+      const fetchDetails = async () => {
+        try {
+          const idProduit = Number(localStorage.getItem("idprod"));
+          const productResponse = await axios.get(`http://localhost:9999/api/Produit/produitdetaille/${idProduit}`);
+          setCategorie(productResponse.data.categorie.nom);
+          setNomprod(productResponse.data.nom);
+          setTVA(productResponse.data.categorie.tva);
+          const entrepriseResponse = await axios.get(`http://localhost:9999/AO/nometntreprise/${idProduit}`);
+          setNometse(entrepriseResponse.data);
+        } catch (err) {
+          console.error("Error fetching details:", err);
+        }
       };
-  
-      // Send data using axios
-      const response = await axios.post(`http://localhost:9999/AO/ADDAO/${payload.idproduit}`, payload);
-  
-      // Check for a successful response
-      if (response.status === 200) {
-        setStatus('succeeded');
-        toast({
-          title: "Success",
-          description: "Call for Tender created successfully",
-          status: "success",
-          duration: 3000,
-          isClosable: true,
-        });
-  
-        // Reset form data after successful submission
-        setNum('');
-        setRef('');
-        setDescription('');
-        setDateCloture('');
-        setQuantite('');
-      } else {
+      fetchDetails();
+    }, []);
+
+    const handleSubmit = async () => {
+      setError('');
+      if (!num.trim() || !ref.trim() || !description.trim() || !DateCloture.trim() || !quantite.trim()) {
+        setError("All fields are required.");
+        return;
+      }
+
+      setStatus('loading');
+      try {
+        const payload = {
+          idproduit: Number(localStorage.getItem("idprod")),
+          description,
+          dateCloture: DateCloture,
+          quantite,
+          num,
+          ref,
+        };
+
+        const response = await axios.post(`http://localhost:9999/AO/ADDAO/${payload.idproduit}`, payload);
+
+        if (response.status === 200) {
+          setStatus('succeeded');
+          toast({
+            title: "Success",
+            description: "Call for Tender created successfully",
+            status: "success",
+            duration: 3000,
+            isClosable: true,
+          });
+          setNum(''); setRef(''); setDescription(''); setDateCloture(''); setQuantite('');
+        } else {
+          setStatus('failed');
+          toast({
+            title: "Error",
+            description: "Failed to create Call for Tender.",
+            status: "error",
+            duration: 3000,
+            isClosable: true,
+          });
+        }
+      } catch (error) {
+        console.error("Submission error:", error);
         setStatus('failed');
         toast({
           title: "Error",
@@ -105,97 +107,139 @@ export default function CallForTenderForm() {
           isClosable: true,
         });
       }
-    } catch (error) {
-      console.error("Submission error:", error);
-      setStatus('failed');
-      toast({
-        title: "Error",
-        description: "Failed to create Call for Tender.",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-    }
-  };
-  return (
-    <Flex align="center" justify="center" w="100%" py={10}>
-      <Card p={8} w="100%" maxW="600px" borderWidth="1px" borderColor={borderColor}>
-        <Heading as="h3" size="lg" color={textColor} mb={4} textAlign="center">
-          Create Call for Tender
-        </Heading>
-        <Box>
-          <FormControl mb={4} isInvalid={!!error && !num.trim()}>
-            <FormLabel>Num</FormLabel>
-            <Input
-              type="number"
-              value={num}
-              onChange={(e) => setNum(e.target.value)}
-              placeholder="Enter number"
-              isRequired
-            />
-          </FormControl>
+    };
 
-          <FormControl mb={4} isInvalid={!!error && !ref.trim()}>
-            <FormLabel>Reference</FormLabel>
-            <Input
-              type="text"
-              value={ref}
-              onChange={(e) => setRef(e.target.value)}
-              placeholder="Enter reference"
-              isRequired
-            />
-          </FormControl>
+    return (
+      <Flex align="center" justify="center" w="100%" py={10} bg={useColorModeValue("gray.50", "gray.900")}>
+        <Card p={8} w="100%" maxW="900px" borderWidth="1px" borderColor={borderColor} boxShadow="lg" rounded="md">
+          <Heading as="h1" size="xl" color={textColor} mb={6} textAlign="center" textTransform="uppercase" fontWeight="extrabold">
+Appel d'Offre
+          </Heading>
 
-          <FormControl mb={4} isInvalid={!!error && !description.trim()}>
-            <FormLabel>Description</FormLabel>
-            <Textarea
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder="Enter description"
-              isRequired
-            />
-          </FormControl>
+          <Grid templateColumns={{ base: "1fr", md: "1fr 1fr" }} gap={10}>
+            {/* Left column - Read-only fields */}
+            <VStack align="start" spacing={5}>
+              <Box>
+                <Text fontSize="lg" fontWeight="bold" color={textColor} textTransform="uppercase">
+                détail produit
+                </Text>
+                <Divider borderColor={borderColor} mt={2} mb={4} />
+              </Box>
 
-          <FormControl mb={4} isInvalid={!!error && !DateCloture.trim()}>
-            <FormLabel>Closing Date</FormLabel>
-            <Input
-              type="date"
-              value={DateCloture}
-              onChange={(e) => setDateCloture(e.target.value)}
-              isRequired
-            />
-          </FormControl>
+              <FormControl>
+                <FormLabel fontWeight="medium" color={textColor}> Nom </FormLabel>
+                <Input type="text" value={nomprod} isReadOnly bg="gray.100" />
+              </FormControl>
 
-          <FormControl mb={6} isInvalid={!!error && !quantite.trim()}>
-            <FormLabel>Quantity</FormLabel>
-            <Input
-              type="number"
-              value={quantite}
-              onChange={(e) => setQuantite(e.target.value)}
-              placeholder="Enter quantity"
-              isRequired
-            />
-          </FormControl>
+              <FormControl>
+                <FormLabel fontWeight="medium" color={textColor}>Categorie</FormLabel>
+                <Input type="text" value={categorie} isReadOnly bg="gray.100" />
+              </FormControl>
 
-          {error && <Text color="red.500" mb={4}>{error}</Text>} {/* Display error message */}
+              <FormControl>
+                <FormLabel fontWeight="medium" color={textColor}>TVA</FormLabel>
+                <Input type="text" value={tva} isReadOnly bg="gray.100" />
+              </FormControl>
 
-          <Button
-            colorScheme="blue"
-            onClick={handleSubmit} // Use onClick instead of form submission
-            isLoading={status === 'loading'}
-            loadingText="Submitting"
-            w="full"
-          >
-            Submit Call for Tender
-          </Button>
+              <FormControl>
+                <FormLabel fontWeight="medium" color={textColor}> Nom Entreprise</FormLabel>
+                <Input type="text" value={nometse} isReadOnly bg="gray.100" />
+              </FormControl>
+            </VStack>
+
+            {/* Right column - Editable fields */}
+            <VStack align="start" spacing={5}>
+              <Box>
+                <Text fontSize="lg" fontWeight="bold" color={textColor} textTransform="uppercase">
+                détail appel d'offre                </Text>
+                <Divider borderColor={borderColor} mt={2} mb={4} />
+              </Box>
+
+              <FormControl isInvalid={!!error && !num.trim()}>
+                <FormLabel fontWeight="medium" color={textColor}>Numero</FormLabel>
+                <Input
+                  type="number"
+                  value={num}
+                  onChange={(e) => setNum(e.target.value)}
+                  placeholder="Enter number"
+                  isRequired
+                  _focus={{ borderColor: "teal.500", boxShadow: "0 0 0 1px teal.500" }}
+                />
+              </FormControl>
+
+              <FormControl isInvalid={!!error && !ref.trim()}>
+                <FormLabel fontWeight="medium" color={textColor}>Reference</FormLabel>
+                <Input
+                  type="text"
+                  value={ref}
+                  onChange={(e) => setRef(e.target.value)}
+                  placeholder="Enter reference"
+                  isRequired
+                  _focus={{ borderColor: "teal.500", boxShadow: "0 0 0 1px teal.500" }}
+                />
+              </FormControl>
+
+              <FormControl isInvalid={!!error && !description.trim()}>
+                <FormLabel fontWeight="medium" color={textColor}>Description</FormLabel>
+                <Textarea
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  placeholder="Enter description"
+                  isRequired
+                  _focus={{ borderColor: "teal.500", boxShadow: "0 0 0 1px teal.500" }}
+                />
+              </FormControl>
+
+              <FormControl isInvalid={!!error && !DateCloture.trim()}>
+                <FormLabel fontWeight="medium" color={textColor}> Date de cloture</FormLabel>
+                <Input
+                  type="date"
+                  value={DateCloture}
+                  onChange={(e) => setDateCloture(e.target.value)}
+                  isRequired
+                  _focus={{ borderColor: "teal.500", boxShadow: "0 0 0 1px teal.500" }}
+                />
+              </FormControl>
+
+              <FormControl isInvalid={!!error && !quantite.trim()}>
+                <FormLabel fontWeight="medium" color={textColor}>Quantité</FormLabel>
+                <Input
+                  type="number"
+                  value={quantite}
+                  onChange={(e) => setQuantite(e.target.value)}
+                  placeholder="Enter quantity"
+                  isRequired
+                  _focus={{ borderColor: "teal.500", boxShadow: "0 0 0 1px teal.500" }}
+                />
+              </FormControl>
+
+              {error && <Text color="red.500" mt={2}>{error}</Text>}
+
+              <HStack spacing={4} width="full">
+                <Button
+                  colorScheme="teal"
+                  onClick={handleSubmit}
+                  isLoading={status === 'loading'}
+                  loadingText="Submitting..."
+                  w="full"
+                  size="lg"
+                  boxShadow="md"
+                  _hover={{ bg: "teal.600" }}
+                >
+                  Confirmation
+                </Button>
+             
+              </HStack>
+            </VStack>
+          </Grid>
+
           {status === 'loading' && (
-            <Flex mt={4} justify="center">
-              <Spinner />
-              <Text ml={2}>Submitting...</Text>
+            <Flex mt={6} justify="center">
+              <Spinner size="xl" color="teal.500" />
+              <Text ml={3} fontSize="lg" color={textColor}>Processing your submission...</Text>
             </Flex>
           )}
-        </Box>
-      </Card>
-    </Flex>
-  );
-}
+        </Card>
+      </Flex>
+    );
+  }

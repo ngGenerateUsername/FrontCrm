@@ -62,7 +62,7 @@ const routesContact = [
 
 	},	
 	{
-		name: 'createao',layout: '/produit',path: '/createAO',
+		name: '',layout: '/produit',path: '/createAO',
 		icon: <Icon as={ImTicket} width='20px' height='20px' color='inherit' />,
 		component: ADDAO
 
