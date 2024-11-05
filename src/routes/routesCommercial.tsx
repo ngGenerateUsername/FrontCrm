@@ -17,6 +17,8 @@ import allbdc from 'pages/Commande/allbdc';
 import myfacture from 'pages/Commande/myfacture';
 import Mesreclamation from 'pages/reclamation/reclamtioneste';
 import reclamationetse from 'pages/reclamation/reclamtioneste';
+import Detaileappelloffre from 'pages/apple offre/appeloffre';
+import AOetse from 'pages/apple offre/AllAO';
 
 
 
@@ -98,7 +100,14 @@ const routesCommercial = [
 		name: 'reclamation',layout: '/commercial',path: '/list-reclamation',
 		icon: <Icon as={MdReceipt } width='20px' height='20px' color='inherit' />,
 		component: reclamationetse
-	}	
+	}	,
+
+	{
+		name: 'Appel Offres',layout: '/commercial',path: '/list-AO',
+		icon: <Icon as={MdReceipt } width='20px' height='20px' color='inherit' />,
+		component: AOetse
+	}	,
+
 
 ];
 

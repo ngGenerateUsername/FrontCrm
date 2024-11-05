@@ -864,7 +864,6 @@ export default function Marketplace() {
             </Box>
           </Flex>
         </Flex>
-        <Activite></Activite>
         <Modal
           initialFocusRef={initialRef}
           finalFocusRef={finalRef}

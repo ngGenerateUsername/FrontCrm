@@ -1,7 +1,7 @@
 // Chakra imports
 import { Portal, Box, useDisclosure } from '@chakra-ui/react';
 // Layout components
-import Navbar from 'components/navbar/NavbarAdmin';
+import Navbar from 'components/navbar/NavbarAdminC';
 import Sidebar from 'components/sidebar/Sidebar';
 import { SidebarContext } from 'contexts/SidebarContext';
 import { useState } from 'react';

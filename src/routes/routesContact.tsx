@@ -13,6 +13,7 @@ import Mescommandes from 'pages/Commande/Mescommandes';
 import ClientSelector4 from 'pages/reclamation/clientselector4';
 import Mesreclamation from 'pages/reclamation/Mesreclamation';
 import ADDAO from 'pages/apple offre/AddAO';
+import Detaileappelloffre from 'pages/apple offre/appeloffre';
 const routesContact = [
 	{
 		name: 'produits',layout: '/contact',path: '/checktableallcmd',
@@ -67,7 +68,12 @@ const routesContact = [
 		component: ADDAO
 
 	},
-	
+	{
+		name: '',layout: '/produit',path: '/Detaileappelloffre',
+		icon: <Icon as={ImTicket} width='20px' height='20px' color='inherit' />,
+		component: Detaileappelloffre
+
+	},
 ];
 
 export default routesContact;

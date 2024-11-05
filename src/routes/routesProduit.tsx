@@ -4,6 +4,7 @@ import listProduit from 'pages/produit/listProduit';
 import ClientSelector from 'components/produit/ClientSelector';
 import CheckTable2 from 'components/produit/checktableallcmd';
 import commande from 'components/commande/commande';
+import Detaileappelloffre from 'pages/apple offre/appeloffre';
 
 const routesProduit = [
 	{

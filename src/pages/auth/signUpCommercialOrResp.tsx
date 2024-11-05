@@ -108,21 +108,24 @@ function SignUp() {
         console.log(result);
       }
 
-      if (params.get("role") === "FOURNISSEUR") {
-        const result = await axios.post("http://localhost:8080/api/auth/signup", { username, password, email: params.get("email"), role: ["FOURNISSEUR"] });
+      if (params.get("role") === "CONTACTFOURISSEUR") {
+        const result = await axios.post("http://localhost:8080/api/auth/signup", { username, password, email: params.get("email"), role: ["CONTACTFOURISSEUR"] });
         console.log("test 1")
         console.log(result);
         console.log(result.data);
-       
+        const result2 = await axios.put("http://localhost:8080/api/auth/ajoutRole_entreprise",
+          { idEntreprise: params.get("entreprise"), roleUser: "ROLE_CONTACTFOURISSEUR", idContact: result.data });
+        console.log(result2);
         const result3 = await axios.get("http://localhost:8080/api/contact/CodeVerification?id=" + result.data);
         console.log(result3.data);
         console.log("test 1")
-        const result4 = await axios.post("http://localhost:9090/sendMail",
-          {
-            to: params.get("email"), subject: "Welcome To CRM",
-            html: "<div><p><strong style='color:red'>Welcome" + params.get("email") + "To CRM</strong></p><br><p>Votre Lien de verification de compte<span style='font-weight:500'> <strong><a href='http://localhost:3000/horizon-ui-chakra-ts#/auth/verify?verify=" + result3.data + "'>Lien</a></strong></span></p></div>"
-          });
-        console.log(result);
+          const result4 = await axios.post("http://localhost:9090/sendMail",
+            {
+              to: params.get("email"), subject: "Welcome To CRM",
+              html: "<div style='text-align: center;color: #7C7C7C;'><h2 class='h2' style='color:#968ADB'>Bonjour " + email + " , </h2><br><h3>Vous êtes presque prêt à bénéficier du Notre CRM<span style='font-weight:500'></h3><h4>Cliquez simplement sur le Lien ci-dessous pour vérifier votre adresse e-mail.</h4><br><br><a href='http://localhost:3000/horizon-ui-chakra-ts#/auth/verify?verify="+result3.data+ "'><input style='background-color:#968ADB;border:none;color: white;padding: 15px 32px;text-align: center;text-decoration: none;display: inline-block;font-size:16px;cursor: pointer;border-radius: 12px;display: block;margin-right: auto;margin-left: auto;' type='button' value='Verifier votre compte'></a></div>"
+            });
+  
+          console.log(result);
       }
       toast({
         title:"Compte ajouté avec succés !",

@@ -23,7 +23,7 @@
   import axios from "axios";
 
   export default function CallForTenderForm() {
-    const [num, setNum] = useState('');
+
     const [ref, setRef] = useState('');
     const [description, setDescription] = useState('');
     const [DateCloture, setDateCloture] = useState('');
@@ -42,7 +42,7 @@
     useEffect(() => {
       const fetchDetails = async () => {
         try {
-          const idProduit = Number(localStorage.getItem("idprod"));
+            const idProduit = Number(localStorage.getItem("idprod"));
           const productResponse = await axios.get(`http://localhost:9999/api/Produit/produitdetaille/${idProduit}`);
           setCategorie(productResponse.data.categorie.nom);
           setNomprod(productResponse.data.nom);
@@ -58,7 +58,7 @@
 
     const handleSubmit = async () => {
       setError('');
-      if (!num.trim() || !ref.trim() || !description.trim() || !DateCloture.trim() || !quantite.trim()) {
+      if (!ref.trim() || !description.trim() || !DateCloture.trim() || !quantite.trim()) {
         setError("All fields are required.");
         return;
       }
@@ -70,7 +70,6 @@
           description,
           dateCloture: DateCloture,
           quantite,
-          num,
           ref,
         };
 
@@ -80,12 +79,12 @@
           setStatus('succeeded');
           toast({
             title: "Success",
-            description: "Call for Tender created successfully",
+            description: "Appel d'offre ajouté avec succeé",
             status: "success",
             duration: 3000,
             isClosable: true,
           });
-          setNum(''); setRef(''); setDescription(''); setDateCloture(''); setQuantite('');
+           setRef(''); setDescription(''); setDateCloture(''); setQuantite('');
         } else {
           setStatus('failed');
           toast({
@@ -155,17 +154,6 @@ Appel d'Offre
                 <Divider borderColor={borderColor} mt={2} mb={4} />
               </Box>
 
-              <FormControl isInvalid={!!error && !num.trim()}>
-                <FormLabel fontWeight="medium" color={textColor}>Numero</FormLabel>
-                <Input
-                  type="number"
-                  value={num}
-                  onChange={(e) => setNum(e.target.value)}
-                  placeholder="Enter number"
-                  isRequired
-                  _focus={{ borderColor: "teal.500", boxShadow: "0 0 0 1px teal.500" }}
-                />
-              </FormControl>
 
               <FormControl isInvalid={!!error && !ref.trim()}>
                 <FormLabel fontWeight="medium" color={textColor}>Reference</FormLabel>

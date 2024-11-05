@@ -110,6 +110,15 @@ export default function HeaderLinksC(props: { secondary: boolean }) {
 
  return response.data;
  };
+ const handleNotificationClickno =async(idn:any) => {
+    const response = await axios.get(`http://localhost:9999/commande/getnotifbyid/${idn}`);
+    console.log( "response ",response.data.idproduit)
+    localStorage.setItem("idprod",response.data.idproduit)
+    history.push("/produit/Detaileappelloffre");
+
+
+};
+
 
     // Logout handler"
     const logout = async () => {
@@ -188,7 +197,8 @@ export default function HeaderLinksC(props: { secondary: boolean }) {
         px='0'
         borderRadius='8px'
         mb='10px'
-        onClick={notification.clickable ? () => handleNotificationClick(notification.idnotif) : undefined} // Only add onClick if clickable is true
+        onClick={notification.clickable ? () => handleNotificationClick(notification.idnotif) : ()=>handleNotificationClickno(notification.idnotif)  } 
+        // Only add onClick if clickable is true
     >
         <Text>{notification.msg}</Text>
     </MenuItem>

@@ -6,6 +6,8 @@ import ListeUsersAll from 'pages/contact/ListeUsersAll'
 import ListeClientsAll from 'pages/client/ListeClientsAll'
 import AddCompanyAdmin from'pages/entreprise/addCompanyAdmin'
 import AddContactAdmin from "pages/contact/addContactAdmin";
+import AddFContactAdmin from "pages/contact/addFContactAdmin";
+
 import ListeContactsAll from "pages/contact/ListeContactsAll";
 import ListTicketsAdmin from 'pages/ticket/ListTicketsAdmin';
 import ListMsgsAdmin from 'pages/auth/ListeMsgsAll';
@@ -25,6 +27,11 @@ const routesAdmin = [
 	},
 	{
 		name: 'Tous Les entreprises',layout: '/admin',path: '/all-companys',
+		icon: <Icon as={HiUserGroup} width='20px' height='20px' color='inherit' />,
+		component: ListeAllCompany
+	},
+	{
+		name: 'Tous Les Fournsissue',layout: '/admin',path: '/all-Fournsissue',
 		icon: <Icon as={HiUserGroup} width='20px' height='20px' color='inherit' />,
 		component: ListeAllCompany
 	},
@@ -54,10 +61,17 @@ const routesAdmin = [
 		component: AddCompanyAdmin
 	},
 	{
+		name: 'Ajouter Fournsiseur ',layout: '/admin',path: '/add-Fournsiseur',
+		icon: <Icon as={MdPerson} width='20px' height='20px' color='inherit' />,
+		component: AddFContactAdmin
+	},
+	{
 		name: 'Invite User',layout: '/admin',path: '/add-contact',
 		icon: <Icon as={MdPerson} width='20px' height='20px' color='inherit' />,
 		component: AddContactAdmin
 	},
+
+
 
 ];
 

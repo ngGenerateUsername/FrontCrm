@@ -187,7 +187,8 @@ import { AddLDCExport,
    updateCmdQuantityExport,
    updatereclamationExport
   } from "./Commande/Commande_slice";
-import { ADDAOExport } from "./AO/AO_slice";
+import { ADDAOExport, getalletseAOExport, getencoursAOExport } from "./AO/AO_slice";
+import { AllFournissurExport } from "./Fou_slice/Fou_slice";
 
 
 
@@ -384,7 +385,10 @@ const rootReducer = combineReducers({
       getreclamationExport:getreclamationExport.reducer,
       getreclamationetseExport:getreclamationetseExport.reducer,
       updatereclamationExport:updatereclamationExport.reducer,
-      ADDAOExport:ADDAOExport.reducer
+      ADDAOExport:ADDAOExport.reducer,
+      getencoursAOExport:getencoursAOExport.reducer,
+      AllFournissurExport:AllFournissurExport.reducer,
+      getalletseAOExport:getalletseAOExport.reducer
       
 
 });
