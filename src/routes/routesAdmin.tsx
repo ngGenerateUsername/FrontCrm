@@ -13,6 +13,8 @@ import ListTicketsAdmin from 'pages/ticket/ListTicketsAdmin';
 import ListMsgsAdmin from 'pages/auth/ListeMsgsAll';
 import MainDashboard from 'pages/dashboard';
 import AddCompany from 'pages/entreprise/addCompany';
+import addSupplierAdmin from 'pages/Fournisseur/addSupplierAdmin';
+import CheckTableF from 'pages/Fournisseur/allFournisseur';
 
 const routesAdmin = [
 	{
@@ -33,7 +35,7 @@ const routesAdmin = [
 	{
 		name: 'Tous Les Fournsissue',layout: '/admin',path: '/all-Fournsissue',
 		icon: <Icon as={HiUserGroup} width='20px' height='20px' color='inherit' />,
-		component: ListeAllCompany
+		component: CheckTableF
 	},
 	{
 		name: 'Tous les users',layout: '/admin',path: '/all-users',
@@ -61,10 +63,17 @@ const routesAdmin = [
 		component: AddCompanyAdmin
 	},
 	{
-		name: 'Ajouter Fournsiseur ',layout: '/admin',path: '/add-Fournsiseur',
+		name: 'Ajouter Contact  Fournsiseur ',layout: '/admin',path: '/add-ContactFournsiseur',
 		icon: <Icon as={MdPerson} width='20px' height='20px' color='inherit' />,
 		component: AddFContactAdmin
 	},
+	{
+		name: 'Ajouter  Fournsiseur ',layout: '/admin',path: '/add-Fournsiseur',
+		icon: <Icon as={MdPerson} width='20px' height='20px' color='inherit' />,
+		component:  addSupplierAdmin
+	},
+
+
 	{
 		name: 'Invite User',layout: '/admin',path: '/add-contact',
 		icon: <Icon as={MdPerson} width='20px' height='20px' color='inherit' />,

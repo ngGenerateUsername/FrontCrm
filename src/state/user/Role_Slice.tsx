@@ -61,7 +61,24 @@ export const contactsPerEntreprise = createAsyncThunk(
             return rejectWithValue(error.message)
         }
     }
+    
 )
+export const contactsPerFournisseur = createAsyncThunk(
+    "Role/contactsPerFournisseur",
+    async (data : any, thunkAPI) => {
+        const { rejectWithValue } = thunkAPI;
+        try {         
+            const result = await axios.get("http://localhost:8080/api/role_entreprise/contactsPerFournisseur?id="+data);
+           // console.log(result.data);
+            return result.data;
+
+        } catch (error: any) {
+            return rejectWithValue(error.message)
+        }
+    }
+    
+)
+
 export const entreprisePerProp = createAsyncThunk(
     "Role/entreprisePerContact",
     async (data : any, thunkAPI) => {
@@ -273,3 +290,26 @@ export const RespTicketPerEntrepriseExport = createSlice({
             })
     }
 })
+
+export const contactsPerFournisseurExport = createSlice({
+    name: "contactsPerFournisseurExport",
+    initialState,
+    reducers: {},
+    extraReducers: (builder) => {
+        builder
+            .addCase(contactsPerFournisseur.pending, (state) => {
+                state.status = 'loading';
+                state.error = null
+
+            })
+            .addCase(contactsPerFournisseur.fulfilled, (state, action) => {
+                state.status = 'succeeded';
+                state.record = action.payload;
+            })
+            .addCase(contactsPerFournisseur.rejected, (state, action) => {
+                state.status = 'failed';
+                state.error = action.error.message;
+            })
+    }
+})
+

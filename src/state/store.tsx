@@ -20,6 +20,7 @@ import {
   PropExport,
   CommerciauxPerEntrepriseExport,
   RespTicketPerEntrepriseExport,
+  contactsPerFournisseurExport,
 } from "./user/Role_Slice";
 
 import {
@@ -188,7 +189,7 @@ import { AddLDCExport,
    updatereclamationExport
   } from "./Commande/Commande_slice";
 import { ADDAOExport, getalletseAOExport, getencoursAOExport } from "./AO/AO_slice";
-import { AllFournissurExport } from "./Fou_slice/Fou_slice";
+import { ajoutFournisseurExport, AllFournissurExport, fetchSingleUserFournisseurExport } from "./Fou_slice/Fou_slice";
 
 
 
@@ -388,7 +389,10 @@ const rootReducer = combineReducers({
       ADDAOExport:ADDAOExport.reducer,
       getencoursAOExport:getencoursAOExport.reducer,
       AllFournissurExport:AllFournissurExport.reducer,
-      getalletseAOExport:getalletseAOExport.reducer
+      getalletseAOExport:getalletseAOExport.reducer,
+      ajoutFournisseurExport:ajoutFournisseurExport.reducer,
+      fetchSingleUserFournisseurExport:fetchSingleUserFournisseurExport.reducer,
+      contactsPerFournisseurExport:contactsPerFournisseurExport.reducer
       
 
 });

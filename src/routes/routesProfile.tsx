@@ -8,6 +8,7 @@ import EditUser from 'pages/contact/EditProfile';
 
 import ProfileClient from 'pages/client/ProfilClient';
 import EditClient from 'pages/client/EditClient';
+import ProfilFournsieur from 'pages/Fournisseur/ProfilFournsieur';
 
 
 const routesProfile = [
@@ -25,6 +26,12 @@ const routesProfile = [
 		name: 'Profile entreprise',layout: '/profile',path: '/profile-company',
 		icon: <Icon as={MdPerson} width='20px' height='20px' color='inherit' />,
 		component: ProfileCompany
+	},
+
+	{
+		name: 'Profile Fournisseur',layout: '/profile',path: '/profile-fournisseur',
+		icon: <Icon as={MdPerson} width='20px' height='20px' color='inherit' />,
+		component: ProfilFournsieur
 	},
 	{
 		name: 'Edit entreprise',layout: '/profile',path: '/edit-company',
