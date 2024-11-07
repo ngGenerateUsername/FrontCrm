@@ -294,9 +294,9 @@ export function SidebarLinks(props: {
 				}
 				}
 
-				if(tokenn.aud === '[ROLE_FOURNISSEUR]' ){
+				if(tokenn.aud === '[ROLE_CONTACTFOURISSEUR]' ){
 					if (route.layout === '/fournisseur' || route.layout === '/me') {
-								return (
+									return (
 									<NavLink key={index} to={route.layout + route.path}>
 										{route.icon ? (
 											<Box>

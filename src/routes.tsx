@@ -21,6 +21,7 @@ import routesPanier from 'routes/routesPanier';
 
 import routesProduit from 'routes/routesProduit';
 import routesCategorie from 'routes/routesCategorie';
+import routesFournisseur from 'routes/routesfournisseur';
 const routes = [
 	{
 		name: "page d'acceuil",layout: '/auth',path: '/default',
@@ -78,6 +79,9 @@ routesCategorie.forEach(element => {
 	routes.push(element)
 });
 routesPanier.forEach(element => {
+	routes.push(element)
+});
+routesFournisseur.forEach(element => {
 	routes.push(element)
 });
 

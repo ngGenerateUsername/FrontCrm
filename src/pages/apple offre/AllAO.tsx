@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getreclamationetse, updatereclamation } from 'state/Commande/Commande_slice';
-import {
+import { Tooltip } from "@chakra-ui/react";
+import { InfoOutlineIcon } from "@chakra-ui/icons";
+
+import {  
   Flex,
   Box,
   Table,
@@ -103,27 +105,49 @@ export default function AOetse() {
       if (status === "succeeded") {
     return record.map((e: any, index: number) => (
       <Tr key={index}>
-        <Td borderColor={borderColor}>{index + 1}</Td>
-        <Td borderColor={borderColor}>
-          <Text color={textColor} fontSize="sm" fontWeight="700">
-            {e.nomprod}
-          </Text>
-        </Td>
-    
-        <Td borderColor={borderColor}>
-          <Text color={textColor} fontSize="sm" fontWeight="700">
-            {e.description}
-          </Text>
-        </Td>
-  
-    
-        <Td borderColor={borderColor}>
-       
-        </Td>
-      </Tr>
-    ));}
-  };
+      <Td borderColor={borderColor}>{index + 1}</Td>
+      <Td borderColor={borderColor}>
+        <Text color={textColor} fontSize="sm" fontWeight="700">
+          {e.ref}
+        </Text>
+      </Td>
+      <Td borderColor={borderColor}>
+        <Text color={textColor} fontSize="sm" fontWeight="700">
+          {e.nomprod}
+        </Text>
+      </Td>
+      <Td borderColor={borderColor}>
+        <Tooltip
+          label={
+            <Box>
+              <Text><strong>Date Publication:</strong> {formatDate(e.datePublication)}</Text>
+              <Text><strong>Date Clôture:</strong> {formatDate(e.dateCloture)}</Text>
+              <Text><strong>Quantité:</strong> {e.quantite}</Text>
+              <Text><strong>Description:</strong> {e.description}</Text>
+              
+              <Text><strong>description Produit:</strong> {e.description}</Text>
 
+
+              <Text><strong>Nom ETSE:</strong> {e.nometse}</Text>
+              <Text><strong>Catégorie:</strong> {e.categorie}</Text>
+              <Text><strong>TVA:</strong> {e.tva}%</Text>
+            </Box>
+          }
+          fontSize="md"
+          placement="top"
+          bg="gray.700"
+          color="white"
+        >
+          {/* Wrap the icon in a fragment to ensure Tooltip has a single child */}
+          <Box display="inline-block">
+            <InfoOutlineIcon cursor="pointer" color="gray.500" />
+          </Box>
+        </Tooltip>
+      </Td>
+    </Tr>
+  ));
+}
+};
   return (
     <Card flexDirection="column" w="100%" px="0px" overflowX={{ sm: "scroll", lg: "hidden" }}>
       <Flex px="25px" mb="8px" align="left" justifyContent="space-between">
@@ -137,7 +161,10 @@ export default function AOetse() {
           <Thead>
             <Tr>
               <Th borderColor={borderColor}>#</Th>
-              <Th borderColor={borderColor}>Nom du produit</Th>
+              <Th borderColor={borderColor}>Référence</Th>
+
+              <Th borderColor={borderColor}>Nom Produit</Th>
+              <Th borderColor={borderColor}>Info</Th> {/* New Info column */}
 
             </Tr>
           </Thead>
