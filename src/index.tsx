@@ -4,6 +4,7 @@ import './assets/css/App.css';
 import { HashRouter, Route, Switch, Redirect } from 'react-router-dom';
 import AuthLayout from './layouts/auth';
 import AdminLayout from './layouts/admin';
+  import  FournisseurLayout from './layouts/fournisseur';
 import MeLayout from './layouts/me';
 import ProfileLayout from './layouts/profile';
 import PropLayout from './layouts/prop';
@@ -42,6 +43,8 @@ ReactDOM.render(
 					<Route path={`/me`} component={MeLayout} />
 					{token_decrypt !== null && token_decrypt.aud === '[ROLE_ADMIN]' && <Route path={`/admin`} component={AdminLayout} />	}
 					{token_decrypt !== null && token_decrypt.aud === '[ROLE_COMMERCIAL]' && <Route path={`/commercial`} component={CommercialLayout} />	}
+					{token_decrypt !== null && token_decrypt.aud === '[ROLE_CONTACTFOURISSEUR]' && <Route path={`/fournisseur`} component={FournisseurLayout} />	}
+
 					{token_decrypt !== null && token_decrypt.aud === '[ROLE_RESPONSABLETICKET]' && <Route path={`/respTicket`} component={CommercialLayout} />	}
 					{token_decrypt !== null && token_decrypt.aud === '[ROLE_CONTACT]' && <Route path={`/contact`} component={Contact} />	}
 						{/* what is above here is useless */}

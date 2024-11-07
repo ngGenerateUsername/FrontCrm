@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import axios from 'axios';
 import { Tooltip } from "@chakra-ui/react";
 import { InfoOutlineIcon } from "@chakra-ui/icons";
 import {  
@@ -17,18 +17,13 @@ import {
   Button,
 } from "@chakra-ui/react";
 import Card from "components/card/Card";
-import { contactsPerEntreprise, entreprisePerContact } from 'state/user/Role_Slice';
-import { getalletseAO } from 'state/AO/AO_slice';
 import { useHistory } from 'react-router-dom';
 
 export default function AOetse() {
   const borderColor = useColorModeValue("gray.200", "whiteAlpha.100");
-  const dispatch = useDispatch();
-  const [idEntreprise, setidEntreprise] = useState(0);
-  const userId = localStorage.getItem("user");
   const textColor = useColorModeValue("secondaryGray.900", "white");
-  const { status, record } = useSelector((state: any) => state.getalletseAOExport);
-  const [record1, setRecord1] = useState([]);
+  const [record, setRecord] = useState([]);
+  const [status, setStatus] = useState("idle");
   const history = useHistory();
 
   const formatDate = (dateString: string | number | Date) => {
@@ -42,36 +37,22 @@ export default function AOetse() {
   };
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const result = await dispatch(entreprisePerContact(userId) as any).unwrap();
-        const idUser = result.idUser;
-        console.log("Enterprise User ID:", idUser);
-        await dispatch(contactsPerEntreprise(idUser) as any).unwrap();
-        setidEntreprise(Number(idUser));
-      } catch (error) {
-        console.error("Error fetching entreprise data:", error);
-      }
-    };
-    fetchData();
-  }, [dispatch, userId]);
-
-  useEffect(() => {
     const fetchAOData = async () => {
-      if (idEntreprise) {
-        try {
-          const response = await dispatch(getalletseAO({ idetse: idEntreprise }) as any).unwrap();
-          console.log("AO Data:", response);
-          setRecord1(response.data);
-        } catch (error) {
-          console.error("Error fetching AO data:", error);
-        }
+      setStatus("loading");
+      try {
+        const response = await axios.get("http://localhost:9999/AO/getallAO");
+        console.log("AO Data:", response.data);
+        setRecord(response.data);
+        setStatus("succeeded");
+      } catch (error) {
+        console.error("Error fetching AO data:", error);
+        setStatus("failed");
       }
     };
     fetchAOData();
-  }, [dispatch, idEntreprise]);
+  }, []);
 
-  const handleNotificationClick = async (idproduit: any) => {
+  const handleNotificationClick = (idproduit :any) => {
     localStorage.setItem("idprod", idproduit);
     history.push("/produit/Detaileappelloffre");
   };
@@ -98,7 +79,7 @@ export default function AOetse() {
     }
 
     if (status === "succeeded") {
-      return record.map((e: any, index: number) => (
+      return record.map((e, index) => (
         <Tr key={index}>
           <Td borderColor={borderColor}>{index + 1}</Td>
           <Td borderColor={borderColor}>
@@ -138,6 +119,13 @@ export default function AOetse() {
             <Button colorScheme="teal" size="sm" onClick={() => handleNotificationClick(e.idproduit)}>
               Details
             </Button>
+          
+          </Td>
+          <Td borderColor={borderColor}>
+            <Button colorScheme="teal" size="sm" onClick={() => handleNotificationClick(e.idproduit)}>
+              Participer
+            </Button>
+          
           </Td>
         </Tr>
       ));
@@ -159,8 +147,11 @@ export default function AOetse() {
               <Th borderColor={borderColor}>Référence</Th>
               <Th borderColor={borderColor}>Nom Produit</Th>
               <Th borderColor={borderColor}>Info</Th>
-              <Th borderColor={borderColor}>Details</Th> {/* New Details column */}
+              <Th borderColor={borderColor}>Details</Th>
+              <Th borderColor={borderColor}>Action</Th>
+
             </Tr>
+            
           </Thead>
           <Tbody>{renderData()}</Tbody>
         </Table>
