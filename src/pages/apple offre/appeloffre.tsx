@@ -35,7 +35,7 @@ export default function Detaileappelloffre() {
     const fetchData = async () => {
       setStatus("loading");
       try {
-        const response = await axios.get(`http://localhost:9999/AO/getAOproduit/${idP}`);
+        const response = await axios.get(`http://localhost:9989/AO/getAOproduit/${idP}`);
         console.log("API Response:", response.data);
         setRecord(response.data);
         setStatus("succeeded");

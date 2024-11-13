@@ -40,7 +40,7 @@ export default function AOetse() {
     const fetchAOData = async () => {
       setStatus("loading");
       try {
-        const response = await axios.get("http://localhost:9999/AO/getallAO");
+        const response = await axios.get("http://localhost:9989/AO/getallAO");
         console.log("AO Data:", response.data);
         setRecord(response.data);
         setStatus("succeeded");

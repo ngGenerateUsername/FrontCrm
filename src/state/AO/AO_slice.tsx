@@ -26,7 +26,7 @@ export const ADDAO = createAsyncThunk(
         const { idproduit, ...otherData } = data;
         console.log("Payload being sent:", otherData); // Log the payload
 
-       const response = await axios.post(`http://localhost:9999/AO/ADDAO/${idproduit}`, otherData);
+       const response = await axios.post(`http://localhost:9989/AO/ADDAO/${idproduit}`, otherData);
         console.log(response.data);
        return response.data
       } catch (error: any) {
@@ -42,7 +42,7 @@ export const ADDAO = createAsyncThunk(
         const { idproduit, ...otherData } = data;
         console.log("Payload being sent:", otherData); // Log the payload
 
-       const response = await axios.get(`http://localhost:9999/AO/getAOproduit/${idproduit}`, otherData);
+       const response = await axios.get(`http://localhost:9989/AO/getAOproduit/${idproduit}`, otherData);
         console.log(response.data);
        return response.data
       } catch (error: any) {
@@ -58,7 +58,7 @@ export const ADDAO = createAsyncThunk(
       try {
         const { idetse, ...otherData } = data;
 
-       const response = await axios.get(`http://localhost:9999/AO/getallAO/${idetse}`, otherData);
+       const response = await axios.get(`http://localhost:9989/AO/getallAO/${idetse}`, otherData);
         console.log(response.data);
        return response.data
       } catch (error: any) {

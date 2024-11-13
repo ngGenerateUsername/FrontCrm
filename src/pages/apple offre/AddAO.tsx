@@ -47,7 +47,7 @@
           setCategorie(productResponse.data.categorie.nom);
           setNomprod(productResponse.data.nom);
           setTVA(productResponse.data.categorie.tva);
-          const entrepriseResponse = await axios.get(`http://localhost:9999/AO/nometntreprise/${idProduit}`);
+          const entrepriseResponse = await axios.get(`http://localhost:9999/api/Produit/nometntreprise/${idProduit}`);
           setNometse(entrepriseResponse.data);
         } catch (err) {
           console.error("Error fetching details:", err);
@@ -73,7 +73,7 @@
           ref,
         };
 
-        const response = await axios.post(`http://localhost:9999/AO/ADDAO/${payload.idproduit}`, payload);
+        const response = await axios.post(`http://localhost:9989/AO/ADDAO/${payload.idproduit}`, payload);
 
         if (response.status === 200) {
           setStatus('succeeded');
