@@ -96,7 +96,7 @@ export default function AOetse() {
             <Tooltip
               label={
                 <Box>
-                  <Text><strong>Date Publication:</strong> {formatDate(e.datePublication)}</Text>
+                  <Text><strong>Date Publication:</strong> {formatDate(e.DatePublication)}</Text>
                   <Text><strong>Date Clôture:</strong> {formatDate(e.dateCloture)}</Text>
                   <Text><strong>Quantité:</strong> {e.quantite}</Text>
                   <Text><strong>Description:</strong> {e.description}</Text>

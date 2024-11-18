@@ -118,7 +118,7 @@ export default function Detaileappelloffre() {
             </FormControl>
             <FormControl>
               <FormLabel fontWeight="medium" color={textColor}>Date de Publication</FormLabel>
-              <Input type="text" value={formatDate(record.DatePublication)} isReadOnly bg="gray.100" />
+              <Input type="text" value={formatDate(record.datePublication)} isReadOnly bg="gray.100" />
             </FormControl>
             
             <FormControl>
