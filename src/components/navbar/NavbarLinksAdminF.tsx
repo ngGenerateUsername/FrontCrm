@@ -18,10 +18,10 @@ import { useHistory } from 'react-router-dom';
 import axios from 'axios';
 import PropTypes, { any } from 'prop-types';
 import { useDispatch } from 'react-redux';
-import { contactsPerEntreprise, entreprisePerContact } from 'state/user/Role_Slice';
+import { contactsPerEntreprise, contactsPerFournisseur, entreprisePerContact } from 'state/user/Role_Slice';
 import { getnotifbyid } from 'state/Commande/Commande_slice';
 
-export default function HeaderLinksC(props: { secondary: boolean }) {
+export default function HeaderLinksF(props: { secondary: boolean }) {
     const { secondary } = props;
     const { colorMode, toggleColorMode } = useColorMode();
     const navbarIcon = useColorModeValue('gray.400', 'white');
@@ -50,34 +50,39 @@ export default function HeaderLinksC(props: { secondary: boolean }) {
     }, []);
     const dispatch = useDispatch();
 
-    
+    /*
     useEffect(() => {
         dispatch(entreprisePerContact(localStorage.getItem('user')) as any)
             .unwrap()
             .then((res: any) => {
                 // Assuming res.idUser contains the connected entreprise ID
                 setIdentreprise(res.idUser);
-                dispatch(contactsPerEntreprise(res.idUser) as any);
+                dispatch(contactsPerFournisseur(res.idUser) as any);
             })
             .catch((error: Error) => console.log(error));
     }, [dispatch]);
-
+*/
     // Use effect to fetch notifications and filter by entreprise ID
+
+
     useEffect(() => {
         const fetchNotifications = async () => {
             try {
                 const response = await axios.get('http://localhost:9999/api/Produit/allnotif');
-              //  console.log('Response from API:', response);
-
+                // Ensure the data is an array
                 if (response.data && Array.isArray(response.data)) {
-                    // Filter notifications based on `identreprise`
+                    // Filter notifications based on `idetse` being equal to user in localStorage
+                    const user = localStorage.getItem('user');
+                    console.log(user);
+    
                     const filteredNotifications = response.data.filter(
-                        (notification: any) => notification.idetse === identreprise
-                    );
-            console.log(filteredNotifications)
-                    setNotifications(filteredNotifications);
-                    setUnreadCount(filteredNotifications.length);
+                        (notification: any) => notification.idetse == user
 
+                    );
+                    console.log(filteredNotifications)
+
+                    setNotifications(filteredNotifications);
+                    setUnreadCount(filteredNotifications.length); // Count unread notifications
                 } else {
                     console.error('Unexpected data format:', response.data);
                 }
@@ -86,17 +91,14 @@ export default function HeaderLinksC(props: { secondary: boolean }) {
             }
         };
 
-        // Fetch notifications only if `identreprise` is set
-        if (identreprise) {
-            fetchNotifications();
-            const interval = setInterval(fetchNotifications, 5000); // Poll every 5 seconds
+        fetchNotifications(); // Fetch notifications initially
+        const interval = setInterval(fetchNotifications, 5000); // Poll every 5 seconds
 
-            return () => {
-                clearInterval(interval);
-            };
-        }
-    }, [identreprise]); // Re-run effect when `identreprise` changes
-      
+        return () => {
+            clearInterval(interval); // Clean up the interval on component unmount
+        };
+    }, []); // Empty dependency array to fetch once on mount
+
    
            const handleNotificationsClick =async(idn:any) => {
            
@@ -282,6 +284,6 @@ export default function HeaderLinksC(props: { secondary: boolean }) {
     );
 }
 
-HeaderLinksC.propTypes = {
+HeaderLinksF.propTypes = {
     secondary: PropTypes.bool,
 };

@@ -52,10 +52,15 @@ export default function AOetse() {
     fetchAOData();
   }, []);
 
+  const handleparticpate = (idao :any ) => {
+    localStorage.setItem("idao", idao);
+    history.push("/produit/particpation");
+  };
   const handleNotificationClick = (idproduit :any) => {
     localStorage.setItem("idprod", idproduit);
     history.push("/produit/Detaileappelloffre");
   };
+
 
   const renderData = () => {
     if (status === "loading") {
@@ -121,12 +126,7 @@ export default function AOetse() {
             </Button>
           
           </Td>
-          <Td borderColor={borderColor}>
-            <Button colorScheme="teal" size="sm" onClick={() => handleNotificationClick(e.idproduit)}>
-              Participer
-            </Button>
-          
-          </Td>
+       
         </Tr>
       ));
     }
@@ -148,7 +148,6 @@ export default function AOetse() {
               <Th borderColor={borderColor}>Nom Produit</Th>
               <Th borderColor={borderColor}>Info</Th>
               <Th borderColor={borderColor}>Details</Th>
-              <Th borderColor={borderColor}>Action</Th>
 
             </Tr>
             

@@ -2,6 +2,7 @@ import { Icon } from '@chakra-ui/react';
 import { CreditIcon, DocumentIcon, InvoiceIcon, MastercardIcon, StatsIcon } from 'components/icons/Icons';
 import appeloffrecf from 'pages/apple offre/appeloffrecf';
 import getallao from 'pages/apple offre/getallao';
+import particpation from 'pages/apple offre/Particpate';
 import { ImTicket } from 'react-icons/im';
 import { MdPerson, MdReceipt } from 'react-icons/md';
 
@@ -20,6 +21,14 @@ const routesFournisseur = [
 		component: appeloffrecf
 
 	},
+	{
+		name: '',layout: '/produit',path: '/particpation',
+		icon: <Icon as={ImTicket} width='20px' height='20px' color='inherit' />,
+		component: particpation
+
+	},
+
+	
 
 
 ];

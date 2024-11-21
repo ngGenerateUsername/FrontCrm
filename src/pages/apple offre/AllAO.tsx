@@ -20,6 +20,7 @@ import Card from "components/card/Card";
 import { contactsPerEntreprise, entreprisePerContact } from 'state/user/Role_Slice';
 import { getalletseAO } from 'state/AO/AO_slice';
 import { useHistory } from 'react-router-dom';
+import axios from 'axios';
 
 export default function AOetse() {
   const borderColor = useColorModeValue("gray.200", "whiteAlpha.100");
@@ -29,6 +30,7 @@ export default function AOetse() {
   const textColor = useColorModeValue("secondaryGray.900", "white");
   const { status, record } = useSelector((state: any) => state.getalletseAOExport);
   const [record1, setRecord1] = useState([]);
+  const [participationData, setParticipationData] = useState<{ [key: number]: any[] }>({});
   const history = useHistory();
 
   const formatDate = (dateString: string | number | Date) => {
@@ -76,6 +78,27 @@ export default function AOetse() {
     history.push("/produit/Detaileappelloffre");
   };
 
+  const handleListParticipation = (idao: number) => {
+    setParticipationData(prevState => {
+      if (prevState[idao]) {
+        // If data already exists, remove it (hide participants)
+        const newState = { ...prevState };
+        delete newState[idao];
+        return newState;
+      } else {
+        // Fetch participants and add it to the state
+        axios.get(`http://localhost:9989/AO/participationappeloffre/${idao}`)
+          .then(response => {
+            setParticipationData(currentState => ({ ...currentState, [idao]: response.data }));
+          })
+          .catch(error => {
+            console.error("Error fetching participation data:", error);
+          });
+        return prevState;
+      }
+    });
+  };
+  
   const renderData = () => {
     if (status === "loading") {
       return (
@@ -91,7 +114,7 @@ export default function AOetse() {
       return (
         <Tr>
           <Td colSpan={6} textAlign="center">
-            <Text color="red.500">Erreur lors du chargement des réclamations</Text>
+            <Text color="red.500">Erreur lors du chargement des appel offre </Text>
           </Td>
         </Tr>
       );
@@ -115,7 +138,7 @@ export default function AOetse() {
             <Tooltip
               label={
                 <Box>
-                  <Text><strong>Date Publication:</strong> {formatDate(e.datePublication)}</Text>
+                  <Text><strong>Date Publication:</strong> {e.DatePublication}</Text>
                   <Text><strong>Date Clôture:</strong> {formatDate(e.dateCloture)}</Text>
                   <Text><strong>Quantité:</strong> {e.quantite}</Text>
                   <Text><strong>Description:</strong> {e.description}</Text>
@@ -135,12 +158,51 @@ export default function AOetse() {
             </Tooltip>
           </Td>
           <Td borderColor={borderColor}>
+            <Button colorScheme="orange" size="sm" onClick={() => handleListParticipation(e.idao)}>
+              List Participants
+            </Button>
+          </Td>
+          <Td borderColor={borderColor}>
             <Button colorScheme="teal" size="sm" onClick={() => handleNotificationClick(e.idproduit)}>
               Details
             </Button>
           </Td>
+          
         </Tr>
       ));
+    }
+  };
+
+  const renderParticipationData = (tenderId: number) => {
+    if (participationData[tenderId] && participationData[tenderId].length > 0) {
+      return (
+        <Table variant="simple" color="gray.500" mb="24px" mt="12px">
+          <Thead>
+            <Tr>
+            <Th borderColor={borderColor}>#</Th>
+
+              <Th borderColor={borderColor}>Prix</Th>
+              <Th borderColor={borderColor}>Date Soumission</Th>
+              <Th borderColor={borderColor}>Adresse</Th>
+              <Th borderColor={borderColor}>Mail</Th>
+              <Th borderColor={borderColor}>Username</Th>
+            </Tr>
+          </Thead>
+          <Tbody>
+            {participationData[tenderId].map((item, index) => (
+              <Tr key={index}>
+              <Td borderColor={borderColor}>{index+1}</Td>
+
+                <Td borderColor={borderColor}>{item.prix}</Td>
+                <Td borderColor={borderColor}>{item.datesoummision}</Td>
+                <Td borderColor={borderColor}>{item.adresse}</Td>
+                <Td borderColor={borderColor}>{item.mail}</Td>
+                <Td borderColor={borderColor}>{item.username}</Td>
+              </Tr>
+            ))}
+          </Tbody>
+        </Table>
+      );
     }
   };
 
@@ -159,12 +221,14 @@ export default function AOetse() {
               <Th borderColor={borderColor}>Référence</Th>
               <Th borderColor={borderColor}>Nom Produit</Th>
               <Th borderColor={borderColor}>Info</Th>
-              <Th borderColor={borderColor}>Details</Th> {/* New Details column */}
+              <Th borderColor={borderColor}>Participants</Th>
+              <Th borderColor={borderColor}>Details</Th>
             </Tr>
           </Thead>
           <Tbody>{renderData()}</Tbody>
         </Table>
       </Box>
-    </Card>
+      <Box mt={8}>{Object.keys(participationData).map((idao) => renderParticipationData(Number(idao)))}</Box>
+      </Card>
   );
 }

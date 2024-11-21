@@ -16,8 +16,8 @@ mapboxgl.accessToken = environment.mapbox.accessToken;
     const map = new mapboxgl.Map({
       container: mapContainer.current,
       style: 'mapbox://styles/mapbox/streets-v12',
-      center: [-79.4512, 43.6568],
-      zoom: 13
+      center: [10.1815, 36.8065],
+            zoom: 10
     });
 
     const coordinatesGeocoder = (query:any) => {

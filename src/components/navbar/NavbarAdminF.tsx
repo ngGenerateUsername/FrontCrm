@@ -2,9 +2,9 @@
 // Chakra Imports
 import { Box, Breadcrumb, BreadcrumbItem, BreadcrumbLink, Flex, Link, Text, useColorModeValue } from '@chakra-ui/react';
 import { useState, useEffect } from 'react';
-import AdminNavbarLinksC from 'components/navbar/NavbarLinksAdminC';
+import AdminNavbarLinksF from 'components/navbar/NavbarLinksAdminF';
 
-export default function AdminNavbarC(props: {
+export default function AdminNavbarF(props: {
 	secondary: boolean;
 	message: string|boolean;
 	brandText: string;
@@ -117,7 +117,7 @@ export default function AdminNavbarC(props: {
 					</Link>
 				</Box>
 				<Box ms='auto' w={{ sm: '100%', md: 'unset' }}>
-					<AdminNavbarLinksC
+					<AdminNavbarLinksF
 						//onOpen={props.onOpen} 
 						secondary={props.secondary}
 					//	fixed={props.fixed} 

@@ -19,6 +19,7 @@ import Mesreclamation from 'pages/reclamation/reclamtioneste';
 import reclamationetse from 'pages/reclamation/reclamtioneste';
 import Detaileappelloffre from 'pages/apple offre/appeloffre';
 import AOetse from 'pages/apple offre/AllAO';
+//import participant from 'pages/apple offre/partcipant';
 
 
 
@@ -108,7 +109,13 @@ const routesCommercial = [
 		component: AOetse
 	}	,
 
+	/*{
+		name: 'partcicpant',layout: '/produit',path: '/list-participant',
+		icon: <Icon as={MdReceipt } width='20px' height='20px' color='inherit' />,
+		component: participant
+	}	,
 
+*/
 ];
 
 export default routesCommercial;
