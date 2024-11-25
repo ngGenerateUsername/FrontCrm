@@ -24,7 +24,7 @@ import {
   DrawerFooter,
   Select,
   useDisclosure,
-  FormLabel
+  Input
 } from "@chakra-ui/react";
 import * as React from "react";
 import { FaAd, FaAddressBook, FaAddressCard, FaTrash } from "react-icons/fa";
@@ -34,7 +34,7 @@ import { createColumnHelper, SortingState } from "@tanstack/react-table";
 
 // Custom components
 import Card from "components/card/Card";
-import Menu from "components/menu/MainMenu";
+import Menu from "components/menu/MenuExport";
 import { SetStateAction, useEffect, useState } from "react";
 import { Console } from "console";
 import { useHistory } from "react-router-dom";
@@ -86,6 +86,7 @@ export default function CheckTable() {
   const [isLoading, setIsLoading] = useState(true); // Initial loading state (optional)
   const [idEntreprise, setidEntreprise] = useState(null); // Or some default value
   const [recordState, setRecordState] = useState([]);
+  const [searchQuery, setSearchQuery] = useState(""); // State for search input
 
  
   useEffect(() => {
@@ -111,6 +112,9 @@ export default function CheckTable() {
     fetchData();
   }, [dispatch]);
 
+  const filteredRecords = recordState.filter((e: any) =>
+    e.nom.toLowerCase().startsWith(searchQuery.toLowerCase())
+  );
   
   const { status, record } = useSelector((state: any) => state.AllProduitExport);
   console.log(record, status);
@@ -159,13 +163,7 @@ const ModifProduit = async (updatedData: any) => {
 
   //end state added
 
-  const { status: statusCommerciaux, record: recordCommerciaux } = useSelector(
-    (state: any) => state.CommerciauxPerEntrepriseExport
-  );
-  const { status:statusCLientsOfMyEntrepriseJustClients, record:recordCLientsOfMyEntrepriseJustClients } = useSelector(
-    (state: any) => state.CLientsOfMyEntrepriseJustClientsExport
-  );
-
+  
   const DeleteProduitF = async (id: string) => {
     const confirmation = window.confirm("Êtes-vous sûr de vouloir supprimer ce produit ?");
   
@@ -235,9 +233,12 @@ const ModifProduit = async (updatedData: any) => {
       );
 
     if (status === "succeeded") {
-      return recordState.map((e: any) => {
+      return filteredRecords.map((e: any) => {
+        
         return (
+    
           <Tr>
+            
             <Td>
               <Flex
                 justifyContent="space-between"
@@ -269,6 +270,7 @@ const ModifProduit = async (updatedData: any) => {
                 {e.nom}
               </Text>
             </Td>
+            
             <Td>
               <Flex
                 justifyContent="space-between"
@@ -429,6 +431,7 @@ alignItems="center"
 </Td>
         
         </Tr>
+          
       );
     });
   }
@@ -442,6 +445,13 @@ alignItems="center"
     px="0px"
     overflowX={{ sm: "scroll", lg: "hidden" }}>
     <Flex px="25px" mb="8px" align="left" justifyContent="space-between">
+  <Input
+    placeholder="Search by product name" 
+    value={searchQuery}
+    onChange={(e) => setSearchQuery(e.target.value)}
+    width="300px" 
+    mb="20px"
+  />
       <Button
         fontSize="sm"
         variant="brand"
@@ -453,8 +463,7 @@ alignItems="center"
         onClick={onOpen}>
         Ajouter Produit
       </Button>
-      <Menu data={recordCLientsOfMyEntrepriseJustClients} />
-    </Flex>
+      <Menu data={record} type="Produit "/>    </Flex>
          
       <Box>
         <Table variant="simple" color="gray.500" mb="24px" mt="12px">
