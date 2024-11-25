@@ -106,7 +106,10 @@ const CallForTenderPDF = (props: { tender: any }) => {
         <Text style={styles.text}>
           Date de Clôture: {new Date(tenderData.dateCloture).toLocaleDateString()}
         </Text>
-
+        <Text style={styles.text}>
+          Date de Livraison : {new Date(tenderData.dateLivraisonAO).toLocaleDateString()}
+        </Text>
+        
         <View style={styles.divider} />
 
 

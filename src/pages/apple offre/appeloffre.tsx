@@ -124,6 +124,10 @@ export default function Detaileappelloffre() {
             </FormControl>
             
             <FormControl>
+              <FormLabel fontWeight="medium" color={textColor}>Date de Livraison </FormLabel>
+              <Input type="text" value={record.dateLivraisonAO || ''} isReadOnly bg="gray.100" />
+            </FormControl>
+            <FormControl>
               <FormLabel fontWeight="medium" color={textColor}>Date de Cloture</FormLabel>
               <Input type="text" value={record.dateCloture || ''} isReadOnly bg="gray.100" />
             </FormControl>

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Tooltip } from "@chakra-ui/react";
 import { InfoOutlineIcon } from "@chakra-ui/icons";
-import {  
+import {
   Flex,
   Box,
   Table,
@@ -29,7 +29,7 @@ export default function AOetse() {
   const userId = localStorage.getItem("user");
   const textColor = useColorModeValue("secondaryGray.900", "white");
   const { status, record } = useSelector((state: any) => state.getalletseAOExport);
-  const [record1, setRecord1] = useState([]);
+  const [record1, setRecord1] = useState([]); // Initialized as an empty array
   const [participationData, setParticipationData] = useState<{ [key: number]: any[] }>({});
   const history = useHistory();
 
@@ -64,7 +64,7 @@ export default function AOetse() {
         try {
           const response = await dispatch(getalletseAO({ idetse: idEntreprise }) as any).unwrap();
           console.log("AO Data:", response);
-          setRecord1(response.data);
+          setRecord1(response.data || []); // Handle undefined or null data
         } catch (error) {
           console.error("Error fetching AO data:", error);
         }
@@ -79,48 +79,62 @@ export default function AOetse() {
   };
 
   const handleListParticipation = (idao: number) => {
-    setParticipationData(prevState => {
+    setParticipationData((prevState) => {
       if (prevState[idao]) {
-        // If data already exists, remove it (hide participants)
         const newState = { ...prevState };
         delete newState[idao];
         return newState;
       } else {
-        // Fetch participants and add it to the state
-        axios.get(`http://localhost:9989/AO/participationappeloffre/${idao}`)
-          .then(response => {
-            setParticipationData(currentState => ({ ...currentState, [idao]: response.data }));
+        axios
+          .get(`http://localhost:9989/AO/participationappeloffre/${idao}`)
+          .then((response) => {
+            setParticipationData((currentState) => ({
+              ...currentState,
+              [idao]: response.data,
+            }));
           })
-          .catch(error => {
+          .catch((error) => {
             console.error("Error fetching participation data:", error);
           });
         return prevState;
       }
     });
   };
-  
+
+  const handleDelete = async (idao: number, event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault(); // Prevent default form behavior
+    try {
+      await axios.delete(`http://localhost:9989/AO/deleteAO/${idao}`);
+      setRecord1((prev) => (Array.isArray(prev) ? prev.filter((item: any) => item.idao !== idao) : []));
+      alert("Tender deleted successfully!");
+    } catch (error) {
+      console.error("Error deleting tender:", error);
+      alert("Error deleting tender. Please try again.");
+    }
+  };
+
   const renderData = () => {
     if (status === "loading") {
       return (
         <Tr>
-          <Td colSpan={6} textAlign="center">
+          <Td colSpan={7} textAlign="center">
             <Spinner size="md" />
           </Td>
         </Tr>
       );
     }
-    
+
     if (status === "failed") {
       return (
         <Tr>
-          <Td colSpan={6} textAlign="center">
-            <Text color="red.500">Erreur lors du chargement des appel offre </Text>
+          <Td colSpan={7} textAlign="center">
+            <Text color="red.500">Erreur lors du chargement des appel offre</Text>
           </Td>
         </Tr>
       );
     }
 
-    if (status === "succeeded") {
+    if (status === "succeeded" && Array.isArray(record)) {
       return record.map((e: any, index: number) => (
         <Tr key={index}>
           <Td borderColor={borderColor}>{index + 1}</Td>
@@ -138,13 +152,30 @@ export default function AOetse() {
             <Tooltip
               label={
                 <Box>
-                  <Text><strong>Date Publication:</strong> {e.DatePublication}</Text>
-                  <Text><strong>Date Clôture:</strong> {formatDate(e.dateCloture)}</Text>
-                  <Text><strong>Quantité:</strong> {e.quantite}</Text>
-                  <Text><strong>Description:</strong> {e.description}</Text>
-                  <Text><strong>Nom ETSE:</strong> {e.nometse}</Text>
-                  <Text><strong>Catégorie:</strong> {e.categorie}</Text>
-                  <Text><strong>TVA:</strong> {e.tva}%</Text>
+                  <Text>
+                    <strong>Date Publication:</strong> {formatDate(e.datePublication)}
+                  </Text>
+                  <Text>
+                    <strong>Date Clôture:</strong> {formatDate(e.dateCloture)}
+                  </Text>
+                  <Text>
+                    <strong>Date Livraison :</strong> {e.dateLivraisonAO }
+                  </Text>
+                  <Text>
+                    <strong>Quantité:</strong> {e.quantite}
+                  </Text>
+                  <Text>
+                    <strong>Description:</strong> {e.description}
+                  </Text>
+                  <Text>
+                    <strong>Nom ETSE:</strong> {e.nometse}
+                  </Text>
+                  <Text>
+                    <strong>Catégorie:</strong> {e.categorie}
+                  </Text>
+                  <Text>
+                    <strong>TVA:</strong> {e.tva}%
+                  </Text>
                 </Box>
               }
               fontSize="md"
@@ -158,16 +189,35 @@ export default function AOetse() {
             </Tooltip>
           </Td>
           <Td borderColor={borderColor}>
-            <Button colorScheme="orange" size="sm" onClick={() => handleListParticipation(e.idao)}>
+            <Button
+              type="button" // Prevents default form submission behavior
+              colorScheme="orange"
+              size="sm"
+              onClick={() => handleListParticipation(e.idao)}
+            >
               List Participants
             </Button>
           </Td>
           <Td borderColor={borderColor}>
-            <Button colorScheme="teal" size="sm" onClick={() => handleNotificationClick(e.idproduit)}>
+            <Button
+              type="button"
+              colorScheme="teal"
+              size="sm"
+              onClick={() => handleNotificationClick(e.idproduit)}
+            >
               Details
             </Button>
           </Td>
-          
+          <Td borderColor={borderColor}>
+            <Button
+              type="button"
+              colorScheme="red"
+              size="sm"
+              onClick={(event) => handleDelete(e.idao, event)}
+            >
+              Delete
+            </Button>
+          </Td>
         </Tr>
       ));
     }
@@ -179,8 +229,7 @@ export default function AOetse() {
         <Table variant="simple" color="gray.500" mb="24px" mt="12px">
           <Thead>
             <Tr>
-            <Th borderColor={borderColor}>#</Th>
-
+              <Th borderColor={borderColor}>#</Th>
               <Th borderColor={borderColor}>Prix</Th>
               <Th borderColor={borderColor}>Date Soumission</Th>
               <Th borderColor={borderColor}>Adresse</Th>
@@ -191,8 +240,7 @@ export default function AOetse() {
           <Tbody>
             {participationData[tenderId].map((item, index) => (
               <Tr key={index}>
-              <Td borderColor={borderColor}>{index+1}</Td>
-
+                <Td borderColor={borderColor}>{index + 1}</Td>
                 <Td borderColor={borderColor}>{item.prix}</Td>
                 <Td borderColor={borderColor}>{item.datesoummision}</Td>
                 <Td borderColor={borderColor}>{item.adresse}</Td>
@@ -223,12 +271,13 @@ export default function AOetse() {
               <Th borderColor={borderColor}>Info</Th>
               <Th borderColor={borderColor}>Participants</Th>
               <Th borderColor={borderColor}>Details</Th>
+              <Th borderColor={borderColor}>Delete</Th>
             </Tr>
           </Thead>
           <Tbody>{renderData()}</Tbody>
         </Table>
       </Box>
       <Box mt={8}>{Object.keys(participationData).map((idao) => renderParticipationData(Number(idao)))}</Box>
-      </Card>
+    </Card>
   );
 }

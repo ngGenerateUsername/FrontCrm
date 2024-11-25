@@ -58,11 +58,23 @@
 
     const handleSubmit = async () => {
       setError('');
+      
       if (!ref.trim() || !description.trim() || !DateCloture.trim() || !quantite.trim()) {
         setError("All fields are required.");
         return;
       }
-
+    
+      // Validate that dateCloture is at least 15 days after datePublication
+      const datePublication = new Date(); // Assuming DatePublication is set to the current date
+      const dateCloture = new Date(DateCloture);
+      const minDateCloture = new Date(datePublication);
+      minDateCloture.setDate(minDateCloture.getDate() + 15);
+    
+      if (dateCloture < minDateCloture) {
+        setError("Date de clôture doit être au moins 15 jours après la date de publication.");
+        return;
+      }
+    
       setStatus('loading');
       try {
         const payload = {
@@ -72,24 +84,27 @@
           quantite,
           ref,
         };
-
+    
         const response = await axios.post(`http://localhost:9989/AO/ADDAO/${payload.idproduit}`, payload);
-
+    
         if (response.status === 200) {
           setStatus('succeeded');
           toast({
-            title: "Success",
-            description: "Appel d'offre ajouté avec succeé",
+            title: "Succès",
+            description: "Appel d'offre ajouté avec succès.",
             status: "success",
             duration: 3000,
             isClosable: true,
           });
-           setRef(''); setDescription(''); setDateCloture(''); setQuantite('');
+          setRef('');
+          setDescription('');
+          setDateCloture('');
+          setQuantite('');
         } else {
           setStatus('failed');
           toast({
-            title: "Error",
-            description: "Failed to create Call for Tender.",
+            title: "Erreur",
+            description: "Échec de la création de l'appel d'offre.",
             status: "error",
             duration: 3000,
             isClosable: true,
@@ -99,14 +114,15 @@
         console.error("Submission error:", error);
         setStatus('failed');
         toast({
-          title: "Error",
-          description: "Failed to create Call for Tender.",
+          title: "Erreur",
+          description: "Échec de la création de l'appel d'offre.",
           status: "error",
           duration: 3000,
           isClosable: true,
         });
       }
     };
+    
 
     return (
       <Flex align="center" justify="center" w="100%" py={10} bg={useColorModeValue("gray.50", "gray.900")}>
