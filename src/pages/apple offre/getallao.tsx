@@ -42,7 +42,11 @@ export default function AOetse() {
       try {
         const response = await axios.get("http://localhost:9989/AO/getallAO");
         console.log("AO Data:", response.data);
-        setRecord(response.data);
+  
+        // Filter tenders where etat is "en_cours"
+        const filteredData = response.data.filter((tender:any) => tender.etat === "en_cours");
+  
+        setRecord(filteredData);
         setStatus("succeeded");
       } catch (error) {
         console.error("Error fetching AO data:", error);
@@ -51,6 +55,7 @@ export default function AOetse() {
     };
     fetchAOData();
   }, []);
+  
 
   const handleparticpate = (idao :any ) => {
     localStorage.setItem("idao", idao);

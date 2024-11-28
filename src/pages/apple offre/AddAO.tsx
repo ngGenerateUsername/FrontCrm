@@ -67,11 +67,9 @@
       // Validate that dateCloture is at least 15 days after datePublication
       const datePublication = new Date(); // Assuming DatePublication is set to the current date
       const dateCloture = new Date(DateCloture);
-      const minDateCloture = new Date(datePublication);
-      minDateCloture.setDate(minDateCloture.getDate() + 15);
     
-      if (dateCloture < minDateCloture) {
-        setError("Date de clôture doit être au moins 15 jours après la date de publication.");
+      if (dateCloture < datePublication) {
+        setError("Date de clôture doit être  après la date de publication.");
         return;
       }
     

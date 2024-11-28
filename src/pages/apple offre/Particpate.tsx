@@ -59,15 +59,18 @@ export default function Participation(): JSX.Element {
     if (record) {
       const datePublication = new Date(record.datePublication);
       const dateLivraisonAO = new Date(record.dateLivraisonAO);
+      
+      const dateCloture=new Date(record.dateCloture);
       const selectedDate = new Date(dateLivraisonF);
 
       if (selectedDate <= datePublication) {
-        setError("The delivery date must be after the publication date.");
+        setError("La date de livraison doit être apres  la date de publication.");
         return;
-      }
+      } 
+
 
       if (selectedDate > dateLivraisonAO) {
-        setError("The delivery date must be on or before the delivery deadline.");
+        setError("La date de livraison doit être avant ou égale à la date limite de livraison.");
         return;
       }
     }
@@ -135,11 +138,19 @@ export default function Participation(): JSX.Element {
           {record && (
             <>
               <Text fontWeight="bold" color={textColor}>
-                Date Publication: {new Date(record.datePublication).toLocaleDateString()}
+                Date Publication: { formatDate( record.datePublication)}
               </Text>
+
+
+              <Text fontWeight="bold" color={textColor}>
+                Date cloture: { formatDate( record.dateCloture)}
+              </Text>
+
+
+    
               <Text fontWeight="bold" color={textColor}>
               <Text>
-  Date Livraison AO: {formatDate(record.dateLivraisonAO)}
+              Date Livraison AO: {formatDate(record.dateLivraisonAO)}
 </Text>
               </Text>
             </>

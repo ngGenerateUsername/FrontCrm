@@ -28,7 +28,12 @@ export default function AOetse() {
   const [idEntreprise, setidEntreprise] = useState(0);
   const userId = localStorage.getItem("user");
   const textColor = useColorModeValue("secondaryGray.900", "white");
+  //const [dateLivraisonAO, setDateLivraisonAO] = useState<Date | null>(null);
+  //const [dateLivraisonF, setDateLivraisonF] = useState<Date | null>(null);
+
+
   const { status, record } = useSelector((state: any) => state.getalletseAOExport);
+  //setDateLivraisonAO(record.data.dateLivraisonAO);
   const [record1, setRecord1] = useState([]); // Initialized as an empty array
   const [participationData, setParticipationData] = useState<{ [key: number]: any[] }>({});
   const history = useHistory();
@@ -42,6 +47,7 @@ export default function AOetse() {
     const minutes = String(date.getMinutes()).padStart(2, '0');
     return `${day}-${month}-${year} ${hours}:${minutes}`;
   };
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -100,6 +106,7 @@ export default function AOetse() {
       }
     });
   };
+console.log(participationData)
 
   const handleDelete = async (idao: number, event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault(); // Prevent default form behavior
@@ -225,13 +232,18 @@ export default function AOetse() {
 
   const renderParticipationData = (tenderId: number) => {
     if (participationData[tenderId] && participationData[tenderId].length > 0) {
+      const dateLivraisonAO = record1.find((tender: any) => tender.idao === tenderId)?.dateLivraisonAO;
+
       return (
         <Table variant="simple" color="gray.500" mb="24px" mt="12px">
           <Thead>
             <Tr>
               <Th borderColor={borderColor}>#</Th>
               <Th borderColor={borderColor}>Prix</Th>
-              <Th borderColor={borderColor}>Date Soumission</Th>
+              <Th borderColor={borderColor}>Date Livraison</Th>
+              <Th borderColor={borderColor}>Date publication offre</Th>
+
+
               <Th borderColor={borderColor}>Adresse</Th>
               <Th borderColor={borderColor}>Mail</Th>
               <Th borderColor={borderColor}>Username</Th>
@@ -239,10 +251,13 @@ export default function AOetse() {
           </Thead>
           <Tbody>
             {participationData[tenderId].map((item, index) => (
+     
               <Tr key={index}>
                 <Td borderColor={borderColor}>{index + 1}</Td>
                 <Td borderColor={borderColor}>{item.prix}</Td>
                 <Td borderColor={borderColor}>{item.datesoummision}</Td>
+                <Td borderColor={borderColor}>{ item.datepub }</Td>
+
                 <Td borderColor={borderColor}>{item.adresse}</Td>
                 <Td borderColor={borderColor}>{item.mail}</Td>
                 <Td borderColor={borderColor}>{item.username}</Td>
