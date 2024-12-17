@@ -5,12 +5,18 @@ import ClientSelector from 'components/produit/ClientSelector';
 import CheckTable2 from 'components/produit/checktableallcmd';
 import commande from 'components/commande/commande';
 import Detaileappelloffre from 'pages/apple offre/appeloffre';
+import chartproduit from 'components/produit/chartproduit';
 
 const routesProduit = [
 	{
 		name: 'Produit',layout: '/commercial',path: '/produit-list',
 		icon: <Icon as={MdPerson} width='20px' height='20px' color='inherit' />,
 		component:listProduit
+	},
+	{
+		name: 'chart',layout: '/commercial',path: '/chart',
+		icon: <Icon as={MdPerson} width='20px' height='20px' color='inherit' />,
+		component:chartproduit
 	},
 	{
 		

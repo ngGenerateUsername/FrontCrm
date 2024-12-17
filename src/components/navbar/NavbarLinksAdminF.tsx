@@ -104,19 +104,12 @@ export default function HeaderLinksF(props: { secondary: boolean }) {
            
       };
     
-      const handleNotificationClick =async(idn:any) => {
-        const response = await axios.get(`http://localhost:9999/commande/getnotifbyid/${idn}`);
-        console.log( "response ",response.data.idproduit)
-        localStorage.setItem("idprod",response.data.idproduit)
-        history.push("/produit/createAO");
+    
+//ttp://localhost:9999/api/Produit/deletebyid/{{idn}}
 
- return response.data;
- };
  const handleNotificationClickno =async(idn:any) => {
-    const response = await axios.get(`http://localhost:9999/commande/getnotifbyid/${idn}`);
+    const response = await axios.delete(`http://localhost:9999/api/Produit/deletebyid/${idn}`);
     console.log( "response ",response.data.idproduit)
-    localStorage.setItem("idprod",response.data.idproduit)
-    history.push("/produit/Detaileappelloffre");
 
 
 };
@@ -199,7 +192,7 @@ export default function HeaderLinksF(props: { secondary: boolean }) {
         px='0'
         borderRadius='8px'
         mb='10px'
-        onClick={notification.clickable ? () => handleNotificationClick(notification.idnotif) : ()=>handleNotificationClickno(notification.idnotif)  } 
+        onClick={() => handleNotificationClickno(notification.idnotif)}
         // Only add onClick if clickable is true
     >
         <Text>{notification.msg}</Text>

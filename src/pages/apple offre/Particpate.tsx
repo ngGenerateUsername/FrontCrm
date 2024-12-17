@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import {
   Input,
   Flex,
@@ -7,20 +7,18 @@ import {
   useToast,
   useColorModeValue,
   Box,
-  Grid,
+  Text,
   FormControl,
   FormLabel,
-  Text,
-  Divider,
-  Spinner,
-  HStack,
 } from "@chakra-ui/react";
-import Card from "components/card/Card";
 import axios from "axios";
+import { useHistory } from "react-router-dom";
 
 export default function Participation(): JSX.Element {
   const [prix, setPrix] = useState(0);
-  const [dateLivraisonF, setdateLivraisonF] = useState<string>('');
+  const [dateLivraisonF, setdateLivraisonF] = useState<string>("");
+  const [file, setFile] = useState<File | null>(null);
+  const [description, setDescription] = useState<string>("");
   const [record, setRecord] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -29,14 +27,15 @@ export default function Participation(): JSX.Element {
   const borderColor = useColorModeValue("gray.300", "whiteAlpha.300");
 
   const idao = Number(localStorage.getItem("idao"));
+  const history = useHistory();
+
   const formatDate = (dateString: string | number | Date) => {
     const date = new Date(dateString);
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
     const year = date.getFullYear();
     return `${day}/${month}/${year}`;
   };
-  
 
   useEffect(() => {
     const fetchCallForTender = async () => {
@@ -52,6 +51,50 @@ export default function Participation(): JSX.Element {
     fetchCallForTender();
   }, [idao]);
 
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const uploadedFile = e.target.files?.[0];
+    setFile(uploadedFile || null);
+
+    if (uploadedFile && uploadedFile.type === "application/pdf") {
+      const formData = new FormData();
+      formData.append("file", uploadedFile);
+
+      try {
+        const response = await axios.post("http://localhost:5000/extract-text", formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+
+        const extractedText = response.data.text || "";
+        setDescription(extractedText);
+
+        toast({
+          title: "Description Extracted",
+          description: "Description has been successfully extracted from the file.",
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
+      } catch (error) {
+        console.error("Error extracting description:", error);
+        toast({
+          title: "Error",
+          description: "Failed to extract description from the uploaded file.",
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+      }
+    } else {
+      toast({
+        title: "Invalid File",
+        description: "Only PDF files are supported.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  };
+
   const handleSubmit = async (): Promise<void> => {
     setError(null);
     const idcf = Number(localStorage.getItem("user"));
@@ -59,15 +102,12 @@ export default function Participation(): JSX.Element {
     if (record) {
       const datePublication = new Date(record.datePublication);
       const dateLivraisonAO = new Date(record.dateLivraisonAO);
-      
-      const dateCloture=new Date(record.dateCloture);
       const selectedDate = new Date(dateLivraisonF);
 
       if (selectedDate <= datePublication) {
-        setError("La date de livraison doit être apres  la date de publication.");
+        setError("La date de livraison doit être après la date de publication.");
         return;
-      } 
-
+      }
 
       if (selectedDate > dateLivraisonAO) {
         setError("La date de livraison doit être avant ou égale à la date limite de livraison.");
@@ -75,16 +115,26 @@ export default function Participation(): JSX.Element {
       }
     }
 
-    try {
-      const payload = { prix, dateLivraisonF };
+    const participation = {
+      prix,
+      dateLivraisonF,
+      description,
+    };
 
+    const formData = new FormData();
+    formData.append("p", new Blob([JSON.stringify(participation)], { type: "application/json" }));
+    if (file) formData.append("file", file);
+
+    try {
       const response = await axios.post(
         `http://localhost:9989/participate/participate/${idao}/${idcf}`,
-        payload,
-        { headers: { 'Content-Type': 'application/json' } }
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        }
       );
 
-      if (response.data === "you have alreadu partipated") {
+      if (response.data === "You have already participated in this tender.") {
         toast({
           position: "top",
           title: "Error",
@@ -92,7 +142,10 @@ export default function Participation(): JSX.Element {
           status: "error",
           duration: 3000,
           isClosable: true,
+          
         });
+        window.location.href = 'http://localhost:3000/CRM#/fournisseur/allao';
+
       } else if (response.status === 200) {
         toast({
           position: "top",
@@ -102,6 +155,11 @@ export default function Participation(): JSX.Element {
           duration: 3000,
           isClosable: true,
         });
+        // After showing the success message, navigate back to the tenders list:
+        //history.push("http://localhost:3000/CRM#/fournisseur/allao");
+        // If using a HashRouter, ensure this path corresponds correctly to your route setup.
+        // If not using react-router, you can do:
+         window.location.href = 'http://localhost:3000/CRM#/fournisseur/allao';
       } else {
         toast({
           title: "Error",
@@ -138,42 +196,68 @@ export default function Participation(): JSX.Element {
           {record && (
             <>
               <Text fontWeight="bold" color={textColor}>
-                Date Publication: { formatDate( record.datePublication)}
+                Date Publication: {formatDate(record.datePublication)}
               </Text>
-
-
               <Text fontWeight="bold" color={textColor}>
-                Date cloture: { formatDate( record.dateCloture)}
+                Date Clôture: {formatDate(record.dateCloture)}
               </Text>
-
-
-    
               <Text fontWeight="bold" color={textColor}>
-              <Text>
-              Date Livraison AO: {formatDate(record.dateLivraisonAO)}
-</Text>
+                Date Livraison AO: {formatDate(record.dateLivraisonAO)}
               </Text>
             </>
           )}
 
-          <label style={{ fontWeight: 500, color: textColor }}>Prix</label>
-          <Input
-            type="number"
-            value={prix}
-            onChange={(e) => setPrix(parseInt(e.target.value, 10))}
-            placeholder="Enter price"
-            isRequired
-            _focus={{ borderColor: "teal.500", boxShadow: "0 0 0 1px teal.500" }}
-          />
+          <FormControl>
+            <FormLabel fontWeight={500} color={textColor}>
+              Prix
+            </FormLabel>
+            <Input
+              type="number"
+              value={prix}
+              onChange={(e) => setPrix(parseInt(e.target.value, 10))}
+              placeholder="Enter price"
+              isRequired
+              _focus={{ borderColor: "teal.500", boxShadow: "0 0 0 1px teal.500" }}
+            />
+          </FormControl>
 
-          <label style={{ fontWeight: 500, color: textColor }}>Date de Livraison Prévue</label>
-          <Input
-            type="date"
-            value={dateLivraisonF}
-            onChange={(e) => setdateLivraisonF(e.target.value)}
-            isRequired
-            _focus={{ borderColor: "teal.500", boxShadow: "0 0 0 1px teal.500" }}
-          />
+          <FormControl>
+            <FormLabel fontWeight={500} color={textColor}>
+              Date de Livraison Prévue
+            </FormLabel>
+            <Input
+              type="date"
+              value={dateLivraisonF}
+              onChange={(e) => setdateLivraisonF(e.target.value)}
+              isRequired
+              _focus={{ borderColor: "teal.500", boxShadow: "0 0 0 1px teal.500" }}
+            />
+          </FormControl>
+
+          <FormControl>
+            <FormLabel fontWeight={500} color={textColor}>
+              Description
+            </FormLabel>
+            <Input
+              type="text"
+              value={description}
+              placeholder="Extracted description"
+              isReadOnly
+              _focus={{ borderColor: "teal.500", boxShadow: "0 0 0 1px teal.500" }}
+            />
+          </FormControl>
+
+          <FormControl>
+            <FormLabel fontWeight={500} color={textColor}>
+              Upload PDF
+            </FormLabel>
+            <Input
+              type="file"
+              accept=".pdf"
+              onChange={handleFileChange}
+              _focus={{ borderColor: "teal.500", boxShadow: "0 0 0 1px teal.500" }}
+            />
+          </FormControl>
 
           {error && <Text color="red.500">{error}</Text>}
 
